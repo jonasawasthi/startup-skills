@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Startup Skills engine launcher. Resolves the toolkit root through symlinks,
+# picks a Python with the dependencies, and runs the CLI.
+set -euo pipefail
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+ROOT="$(cd -P "$(dirname "$SOURCE")/.." && pwd)"
+if [ -n "${STARTUP_KIT_PYTHON:-}" ]; then PY="$STARTUP_KIT_PYTHON"
+elif [ -x "$ROOT/.venv/bin/python" ]; then PY="$ROOT/.venv/bin/python"
+else PY="$(command -v python3 || command -v python)"; fi
+export PYTHONPATH="$ROOT/lib${PYTHONPATH:+:$PYTHONPATH}"
+export MPLCONFIGDIR="${MPLCONFIGDIR:-${TMPDIR:-/tmp}/startup-kit-mpl}"
+exec "$PY" -m startup_kit.cli "$@"

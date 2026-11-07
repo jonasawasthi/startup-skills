@@ -1,0 +1,34 @@
+# Template (values from the fictional Fieldnote example). Replace every value; inputs without evidence are assumptions.
+model:
+  company: Fieldnote (fictional)
+  currency: USD
+  start: 2027-01
+  months: 36
+  scenario: base
+  starting_cash: {value: 40000, status: reported, note: "Founder-reported bank balance (fictional)"}
+funding:
+  - {label: Seed round (amount TBD), month: 3, amount: null}
+revenue_streams:
+  - name: Cooperative subscriptions
+    type: subscription
+    new_customers_month1: {value: 3, status: assumption, note: "Pilot conversion pace"}
+    new_customers_growth: {value: 0.06, status: assumption}
+    churn: {value: 0.02, evidence: E-009}
+    price: {value: 60, status: assumption, note: "Blend of Starter and Standard plans"}
+    cogs_pct: {value: 0.15, status: estimate}
+  - name: Payment-file fees
+    type: transaction
+    start_month: {value: 13, status: assumption}
+    gmv_month1: {value: 50000, status: assumption}
+    gmv_growth: {value: 0.05, status: assumption}
+    take_rate: {value: 0.004, status: assumption}
+    cogs_pct: {value: 0.3, status: assumption}
+headcount:
+  - {role: Founders (2), monthly_cost: {value: 1500, status: assumption}, count: {value: 2}}
+  - {role: Engineer, start_month: {value: 4}, monthly_cost: {value: 2500, status: assumption}}
+  - {role: Onboarding lead, start_month: {value: 6}, monthly_cost: {value: 1200, status: assumption}}
+opex:
+  - {name: Cloud and tools, monthly: {value: 600, status: estimate}, growth: {value: 0.03}}
+  - {name: Field travel and marketing, monthly: {value: 1200, status: assumption}, growth: {value: 0.02}}
+unit_economics:
+  cac: {value: 250, status: assumption}

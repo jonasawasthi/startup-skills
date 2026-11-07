@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Generated outputs are private by default (startup data, decks, models).
+# Only the README is tracked. Never commit a real startup's analysis to a public repo.
+outputs/*
+!outputs/README.md
+
+# Secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,22 @@
+# Startup profile: identity and defaults shared by every Startup Skills skill.
+name: ""                 # Company name
+one_liner: ""            # One declarative sentence: what you do, for whom
+stage: idea              # idea | pre-seed | seed | series-a | growth
+industry: ""
+geography: []            # e.g. [Nepal, India]
+website: ""
+codebase: ""             # absolute path to the product repository, if any
+confidentiality: confidential   # confidential | internal | public
+brand:
+  accent: ""             # hex, e.g. "#1F5C4A"
+  accent_2: ""
+  heading_font: ""       # must be installed on readers' machines for Office files
+  body_font: ""
+  logo: ""               # path relative to this file
+fundraising:
+  round: ""
+  amount: ""             # leave empty until the founder decides; never invent
+  instrument: ""         # SAFE | priced equity | convertible note | grant
+contacts:
+  founder_name: ""
+  email: ""

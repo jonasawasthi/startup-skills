@@ -1,0 +1,18 @@
+{
+  "name": "startup-skills",
+  "description": "Startup Skills by Jonas Awasthi: evidence-based startup evaluation, pitch decks, proposals, research and fundraising.",
+  "owner": {
+    "name": "Jonas Awasthi",
+    "url": "https://github.com/jonasawasthi"
+  },
+  "plugins": [
+    {
+      "name": "startup-skills",
+      "source": "./",
+      "description": "Six composable skills plus a tested document engine for founders.",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": ["startup", "pitch-deck", "fundraising", "business-plan"]
+    }
+  ]
+}

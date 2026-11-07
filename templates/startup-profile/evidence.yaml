@@ -1,0 +1,5 @@
+# Evidence ledger. Every claim used in a deck, proposal or email must resolve to an entry.
+# status: verified | reported | estimate | assumption | unverified | contradicted
+# confidence: high | medium | low
+# source.type: codebase | document | founder | web | calculation | interview | dataset | analysis
+[]

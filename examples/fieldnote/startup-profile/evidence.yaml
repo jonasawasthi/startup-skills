@@ -1,0 +1,79 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company; every figure below is invented
+# for testing Startup Skills and is labelled with its fictional status.
+- id: E-001
+  claim: Pilot cooperatives actively using Fieldnote weekly
+  key: traction.active_coops
+  value: 14
+  unit: cooperatives
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder dashboard export, Oct 2026 (fictional)", accessed: 2026-11-01}
+  owner: CEO
+  updated: 2026-11-01
+- id: E-002
+  claim: Farmer records captured offline in pilot (cumulative)
+  key: traction.records
+  value: 61200
+  unit: records
+  status: verified
+  confidence: high
+  source: {type: codebase, ref: "analytics/events.sql query results (fictional)", accessed: 2026-11-01}
+  updated: 2026-11-01
+- id: E-003
+  claim: Registered agricultural cooperatives in launch country
+  key: market.coops_country
+  value: 22000
+  unit: cooperatives
+  status: estimate
+  confidence: medium
+  source: {type: dataset, title: "National cooperative registry summary (fictional)", published: 2025-06, accessed: 2026-10-20}
+- id: E-004
+  claim: Average annual software budget per cooperative
+  key: market.annual_budget
+  value: 600
+  unit: USD/yr
+  status: assumption
+  confidence: low
+  source: {type: interview, ref: "9 cooperative manager interviews (fictional)"}
+  owner: CEO
+  validate: Pre-sell annual plans to 5 cooperatives
+- id: E-005
+  claim: Share of cooperatives with smartphone-equipped field agents
+  key: market.smartphone_share
+  value: 0.45
+  status: assumption
+  confidence: low
+  source: {type: analysis, ref: "Founder estimate from pilot region (fictional)"}
+  owner: CEO
+- id: E-006
+  claim: Reachable share in first three regions within 5 years
+  key: market.capture
+  value: 0.08
+  status: assumption
+  confidence: low
+  source: {type: analysis, ref: "Go-to-market plan"}
+  owner: CEO
+- id: E-007
+  claim: Paying pilot cooperatives at USD 40/month
+  key: traction.paying
+  value: 5
+  unit: cooperatives
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Invoices Q3 2026 (fictional)"}
+  updated: 2026-11-01
+- id: E-008
+  claim: Monthly payment-reconciliation time saved per cooperative
+  value: 11
+  unit: hours
+  status: estimate
+  confidence: low
+  source: {type: interview, ref: "Time-and-motion study at 3 pilot coops (fictional)"}
+- id: E-009
+  claim: Monthly logo churn among paying pilots
+  key: traction.churn
+  value: 0.02
+  status: assumption
+  confidence: low
+  source: {type: analysis, ref: "Too early to measure; planning assumption"}
+  owner: CFO

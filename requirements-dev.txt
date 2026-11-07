@@ -1,0 +1,3 @@
+pytest>=7.0
+# Optional: recalculates XLSX formulas during validation (EUPL-1.2; not vendored).
+formulas>=1.2

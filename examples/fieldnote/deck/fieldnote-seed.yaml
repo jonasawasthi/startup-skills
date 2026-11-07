@@ -1,0 +1,130 @@
+deck:
+  company: Fieldnote
+  title: Seed round
+  stage: seed
+  theme: venture
+  audience: venture-capital
+  date: November 2026
+  confidentiality: "Fictional example · not a real company"
+  profile: ../startup-profile
+slides:
+  - type: cover
+    short: true
+    title: Fieldnote
+    subtitle: The offline-first operating system for agricultural cooperatives
+    meta: Seed round · November 2026
+    notes: Open with the one-liner. Pause. Then the problem.
+  - type: points
+    short: true
+    kicker: Problem
+    title: Cooperatives run on paper, so farmers wait weeks to get paid
+    purpose: Make the investor feel the pain before seeing the product.
+    points:
+      - title: Records live in notebooks
+        body: Field agents collect weights and quality grades on paper that is re-typed at month end.
+      - title: Reconciliation eats the month
+        body: Managers spend about 11 hours a month matching deliveries to payments.
+        evidence: [E-008]
+      - title: Errors cost trust
+        body: Disputed payments push farmers to side-sell to middlemen.
+    notes: Use one story from interviews. Keep the 11 hours framed as an estimate from three pilots.
+  - type: split
+    kicker: Solution
+    title: Capture once, offline, and payments reconcile themselves
+    left:
+      heading: Today
+      items: [Paper ledgers re-typed monthly, Payments matched by hand, Disputes settled by memory]
+    right:
+      heading: With Fieldnote
+      items: [Agents capture deliveries offline on any Android phone, Sync when signal returns, Payment files generated automatically]
+    notes: Contrast is the point. Do not demo yet.
+  - type: products
+    kicker: Product
+    title: One data layer, three tools around it
+    items:
+      - {name: Field app, status: live, description: Offline capture of deliveries and grades with photo and GPS., users: Field agents}
+      - {name: Manager console, status: built, description: Reconciliation and payment-file export. Built and tested; launching with next cohort., users: Cooperative managers}
+      - {name: Buyer portal, status: planned, description: Lets processors see verified volumes before pickup., users: Processors and buyers}
+    notes: Be explicit that the buyer portal is planned, not shipped.
+  - type: screenshot
+    kicker: Product
+    title: Agents record a delivery in under a minute, with no signal
+    image: missing-field-app.png
+    needed: Field app delivery-capture screen (Android)
+    status: live
+    callouts:
+      - {title: Works offline, body: Local-first storage; syncs on reconnect.}
+      - {title: Photo + GPS proof, body: Each record carries evidence for disputes.}
+  - type: metrics
+    short: true
+    kicker: Traction
+    title: Early pilots are using it every week, and some already pay
+    items:
+      - {value: "14", label: Active pilot cooperatives, context: "Weekly active, October 2026", evidence: [E-001]}
+      - {value: "61K", label: Records captured offline, context: Cumulative since launch, evidence: [E-002]}
+      - {value: "5", label: Paying cooperatives, context: "USD 40 / month each", evidence: [E-007]}
+    notes: Say clearly that 14 and 5 are company-reported; 61K is from our own event logs.
+  - type: market
+    kicker: Market
+    title: A focused beachhead, sized bottom-up
+    layers:
+      - {name: TAM, value: "$13.2M", definition: "22,000 registered cooperatives × $600 annual software budget", evidence: [E-003, E-004]}
+      - {name: SAM, value: "$5.9M", definition: "45% with smartphone-equipped field agents", evidence: [E-005]}
+      - {name: SOM, value: "$475K", definition: "8% of SAM in three launch regions within five years", evidence: [E-006]}
+    method: "Bottom-up: count × budget × reach. Budget and reach are assumptions to be validated by pre-sales."
+    notes: Investors will push on the $600 budget. Our answer is the pre-sale experiment, not a bigger number.
+  - type: chart
+    kicker: Business model
+    title: Subscription per cooperative, priced against hours saved
+    chart:
+      kind: column
+      categories: [Starter, Standard, Federation]
+      values: [40, 90, 400]
+      prefix: "$"
+      format: currency
+      highlight: 1
+      source: "Fieldnote price list, Nov 2026 (fictional)"
+    takeaway: Standard is the target plan
+    body: Pricing is per cooperative per month. Payments volume is a future take-rate option, not in the plan.
+    notes: Prices are list prices; only Starter has paying customers so far.
+  - type: comparison
+    kicker: Competition
+    title: Generic survey tools collect data; none close the payment loop
+    us: Fieldnote
+    columns: [Offline capture, Payment reconciliation, Cooperative workflows, Local language]
+    rows:
+      - {name: Fieldnote, values: [yes, yes, yes, yes]}
+      - {name: Generic survey apps, values: [yes, no, no, partial]}
+      - {name: Accounting software, values: [no, partial, no, no]}
+      - {name: Paper + spreadsheets, values: [partial, no, partial, yes]}
+    notes: Competitor capabilities are from public product pages; re-check before each meeting.
+  - type: roadmap
+    kicker: Roadmap
+    title: From pilot to the regional default in 24 months
+    items:
+      - {date: Q2 2026, label: Field app, status: live, detail: In 14 pilot cooperatives}
+      - {date: Q4 2026, label: Manager console, status: built, detail: Launch with next cohort}
+      - {date: Q2 2027, label: Payment integrations, status: in-development, detail: Mobile money export}
+      - {date: 2028, label: Buyer portal, status: planned, detail: Verified volumes for processors}
+  - type: team
+    kicker: Team
+    title: Operators who have run cooperatives and shipped offline software
+    people:
+      - {name: Amina Odhiambo, role: CEO, bio: "Fictional. Former cooperative operations lead; ran procurement for a dairy cooperative."}
+      - {name: Ravi Menon, role: CTO, bio: "Fictional. Built offline-first health data apps for field workers."}
+  - type: ask
+    short: true
+    kicker: The round
+    title: Raising a seed round to reach repeatable sales in three regions
+    amount: "[Amount TBD]"
+    instrument: SAFE (example)
+    summary: The amount is deliberately left blank in this fictional example; the builder flags it as missing.
+    use_of_funds:
+      - {name: Product & engineering, share: 45}
+      - {name: Sales & cooperative onboarding, share: 35}
+      - {name: Operations & admin, share: 20}
+    milestones: [Convert pilots to paid plans, Launch manager console, Prove CAC payback under 12 months]
+  - type: closing
+    text: Every cooperative payment, on time and beyond dispute.
+    contact: founders@fieldnote.example
+  - type: sources
