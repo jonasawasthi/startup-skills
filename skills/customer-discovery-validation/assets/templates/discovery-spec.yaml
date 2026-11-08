@@ -1,0 +1,32 @@
+# Customer discovery starter spec. Fill it from the startup profile first; ask the founder only for what is missing.
+# Never type research results you do not have. Format: references/discovery-spec.md
+discovery:
+  company: ""
+  profile: ../startup-profile
+  stage: ""
+  notes_dir: interviews
+  objectives: []
+  methodology: ""        # write after the research
+  summary: ""            # write from the findings; the claim guard checks it
+  next_steps: []
+
+business_model:
+  type: ""               # b2b-saas | enterprise | consumer-app | marketplace | creator-platform | education | devtool | services | ecommerce
+
+segments:
+  - id: S1
+    name: ""
+    side: customer       # supply | demand | customer | other (marketplaces need supply and demand)
+    market: b2c          # b2b | b2c | b2b2c | b2g
+    problem_area: ""
+    roles: {user: "", buyer: "", decision_maker: "", influencers: [], beneficiary: ""}
+    jobs: []
+    early_adopter_signals: []
+    criteria: []
+    recruitment: ""
+
+hypotheses: []           # see hypothesis-register.yaml
+experiments: []          # see experiment-plan.yaml
+surveys: []
+pmf:
+  inputs: {}             # measured values only

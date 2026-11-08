@@ -1,6 +1,6 @@
 # Startup Skills
 
-**Evidence-based startup intelligence for Claude Code.** Six composable Agent Skills and a tested document engine help founders go from **idea → evaluation → validation → strategy → product analysis → business plan → pitch deck → fundraising**. They never invent the numbers.
+**Evidence-based startup intelligence for Claude Code.** Eight composable Agent Skills and a tested document engine help founders go from **idea → evaluation → customer discovery and validation → strategy → product analysis → go-to-market → business plan → pitch deck → fundraising**. They never invent the numbers.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -24,6 +24,8 @@ Most AI pitch-deck tools produce generic slides full of plausible-sounding stati
 | [`startup-proposal-generator`](skills/startup-proposal-generator/SKILL.md) | Substantive proposals and business plans (investor, partnership, accelerator, grant, corporate, internal) with up to 28 sections | DOCX + PDF + XLSX model |
 | [`business-document-generator`](skills/business-document-generator/SKILL.md) | The rendering engine: Markdown+ → DOCX/PDF/MD, YAML → PPTX, YAML → XLSX, audience themes, validation | All formats |
 | [`startup-research`](skills/startup-research/SKILL.md) | Source-disciplined research: primary sources first, dated, triangulated, conflicts surfaced | Research brief + bibliography |
+| [`customer-discovery-validation`](skills/customer-discovery-validation/SKILL.md) | Structured customer research: segments (buyer vs user; marketplace sides apart), behaviour-first interview guides with a leading-question linter, analysis of notes and transcripts with quotes checked against the source, a hypothesis register on the shared ledger, 13-field experiment cards, problem-solution fit and early PMF signals. It never invents interviews, quotes or metrics | Interview guides, discovery report (DOCX/PDF/MD), hypothesis register (XLSX), ledger entries |
+| [`gtm-strategy-maker`](skills/gtm-strategy-maker/SKILL.md) | Evidence-backed go-to-market strategy: segments, ICPs, positioning, a prioritised channel matrix with experiments, launch plans, marketplace cold start, pricing hypotheses, AARRR metrics and 30/60/90-day to 12-month roadmaps sized to the team. It adapts to the business model and never invents conversion rates, CAC or traction | Strategy (DOCX/PDF/MD), channel matrix, KPI dashboard (XLSX), roadmap |
 | [`fundraising-strategist`](skills/fundraising-strategist/SKILL.md) | Readiness, raise planning, evidence-based investor fit (never implies interest), outreach, diligence and negotiation prep | Readiness, target list, outreach drafts, data-room index |
 
 The full catalogue is in [docs/skills-catalog.md](docs/skills-catalog.md).
@@ -74,17 +76,21 @@ Evaluate this idea: a marketplace where Nepali creators sell memberships to fans
 /startup-skills:startup-proposal-generator Write a partnership proposal for <company>, using our profile.
 /startup-skills:startup-research Size the market for B2B payroll software in Kenya, bottom-up.
 /startup-skills:fundraising-strategist Is <investor> a fit for us? Use public information only.
+/startup-skills:gtm-strategy-maker Build our go-to-market plan for the first 90 days, using our profile.
+/startup-skills:customer-discovery-validation Plan interviews for both sides of our marketplace, then analyse my notes.
 ```
 
 ### Typical workflow
 
 1. **Evaluate**: `startup-idea-evaluator` creates `outputs/<startup>/startup-profile/` (the shared profile and evidence ledger).
 2. **Research**: `startup-research` adds dated, sourced entries to the ledger.
-3. **Deck**: `pitch-deck-maker` scans the codebase, writes a deck spec, builds the PPTX/PDF and inspects the previews.
-4. **Proposal**: `startup-proposal-generator` writes the business plan and the financial model from the same evidence.
-5. **Raise**: `fundraising-strategist` assesses readiness, investor fit and outreach.
+3. **Discover and validate**: `customer-discovery-validation` plans interviews, analyses what customers said and did, and moves hypotheses only when the evidence allows.
+4. **Deck**: `pitch-deck-maker` scans the codebase, writes a deck spec, builds the PPTX/PDF and inspects the previews.
+5. **Go to market**: `gtm-strategy-maker` picks the beachhead, channels and experiments, and sizes the roadmap to the team.
+6. **Proposal**: `startup-proposal-generator` writes the business plan and the financial model from the same evidence.
+7. **Raise**: `fundraising-strategist` assesses readiness, investor fit and outreach.
 
-All skills read and write the same profile, so the deck, proposal and plan always tell the same story.
+All skills read and write the same profile, so the deck, proposal, GTM strategy and plan always tell the same story.
 
 ### The engine directly
 
@@ -97,6 +103,13 @@ bin/startup-kit unit-economics --arpu 60 --gross-margin 0.8 --churn 0.03 --cac 4
 bin/startup-kit model model.yaml --profile outputs/acme/startup-profile --out model.xlsx
 bin/startup-kit deck deck.yaml --out outputs/acme/investor-pitch [--variant short]
 bin/startup-kit doc proposal.md --out outputs/acme/business-proposal
+bin/startup-kit gtm analyze gtm.yaml --out outputs/acme/gtm        # channel matrix, metrics, roadmap capacity
+bin/startup-kit gtm kpi gtm.yaml --out outputs/acme/gtm            # KPI dashboard workbook
+bin/startup-kit gtm check strategy.md                              # unsupported market, traction and validation claims
+bin/startup-kit discovery analyze discovery.yaml --record          # interview themes, hypotheses, experiments, fit
+bin/startup-kit discovery interviews discovery.yaml --out DIR      # interview guides per segment (linted)
+bin/startup-kit discovery report discovery.yaml --out DIR          # 18-section discovery report (Markdown+)
+bin/startup-kit discovery check report.md --spec discovery.yaml    # invented quotes, counts and unsupported claims
 bin/startup-kit check <files…>   &&   bin/startup-kit preview deck.pdf
 ```
 
@@ -118,13 +131,15 @@ Every artifact is re-opened with an independent reader by `startup-kit check`. T
 ## Repository layout
 
 ```
-skills/            six Agent Skills (SKILL.md + references/ + examples/)
-knowledge/         attributed summaries (YC, Paul Graham, Sequoia, a16z, NFX, BVP, Stripe Atlas, HBR) + original frameworks
+skills/            eight Agent Skills (SKILL.md + references/ + examples/)
+knowledge/         attributed summaries (YC, Paul Graham, Sequoia, a16z, NFX, BVP, Stripe Atlas, HBR; GTM: Dunford,
+                   Moore, Ellis, Reforge, First Round, HubSpot, OpenView; customer discovery: Blank, Fitzpatrick,
+                   Ries, Strategyzer, Christensen) + original frameworks
 lib/startup_kit/   the engine: evidence ledger, scanner, calculators, theme, renderers, validators, CLI
 templates/         the startup-profile template
-examples/fieldnote fictional end-to-end example (ledger, deck, proposal, model)
+examples/fieldnote fictional end-to-end example (ledger, deck, proposal, model, GTM spec, customer discovery)
 docs/              architecture, design system, research notes, skills catalogue
-tests/             45 tests: unit, guards (fabrication, contradictions, incomplete data), golden builds, CLI integration
+tests/             146 tests: unit, guards (fabrication, contradictions, incomplete data), golden builds, CLI integration
 scripts/           setup, install, skill-spec validator, link checker
 outputs/           your generated work: gitignored, private by default
 ```
@@ -132,13 +147,13 @@ outputs/           your generated work: gitignored, private by default
 ## Quality assurance
 
 ```bash
-.venv/bin/python -m pytest          # 45 tests
+.venv/bin/python -m pytest          # 146 tests (set STARTUP_KIT_NETWORK=1 to include the live link check)
 python3 scripts/validate_skills.py  # Agent Skills spec compliance
 python3 scripts/check_links.py      # re-verify knowledge-base URLs (title-matched)
 claude plugin validate .            # plugin + marketplace manifests
 ```
 
-Compatibility was verified on Claude Code 2.1.270 (macOS) by loading the plugin with `--plugin-dir`, confirming all six skills appear as `startup-skills:*`, and invoking a skill whose setup command resolved the toolkit and passed `doctor`.
+Compatibility was verified on Claude Code 2.1.270 (macOS) by loading the plugin with `--plugin-dir`, confirming all eight skills appear as `startup-skills:*`, and invoking a skill whose setup command resolved the toolkit and passed `doctor`.
 
 ## Attribution and source policy
 

@@ -6,6 +6,7 @@ Startup Skills is a collection of Claude Code Agent Skills backed by one small, 
                 ┌──────────────────────── skills/ (Agent Skills, SKILL.md) ───────────────────────┐
                 │ startup-idea-evaluator  pitch-deck-maker  startup-proposal-generator           │
                 │ business-document-generator  startup-research  fundraising-strategist          │
+                │ gtm-strategy-maker  customer-discovery-validation                              │
                 └───────────────┬──────────────────────────────┬─────────────────────────────────┘
                      reads      │                              │ runs  bin/startup-kit <command>
                                 ▼                              ▼
@@ -19,6 +20,10 @@ Startup Skills is a collection of Claude Code Agent Skills backed by one small, 
                                                    ├─ deck/         deck spec → layouts → PPTX/PDF, claim guard
                                                    ├─ docs/         Markdown+ → DOCX / PDF / MD
                                                    ├─ xlsx.py       driver-based financial model, live formulas
+                                                   ├─ gtm.py        channel scoring, model guards, metrics, roadmap
+                                                   │                capacity, claim guard, KPI workbook
+                                                   ├─ customer_discovery.py  notes + quote verification, themes,
+                                                   │                hypotheses, experiments, fit, PMF, guides, report
                                                    └─ inspect.py    artifact validation + PNG previews
 ```
 

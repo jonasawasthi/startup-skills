@@ -1,7 +1,7 @@
 {
   "name": "startup-skills",
-  "version": "1.0.0",
-  "description": "Evidence-based startup intelligence: idea evaluation, codebase-grounded pitch decks (PPTX/PDF), proposals and business plans (DOCX/PDF), research, fundraising strategy and financial models (XLSX).",
+  "version": "1.2.0",
+  "description": "Evidence-based startup intelligence: idea evaluation, customer discovery and validation, codebase-grounded pitch decks (PPTX/PDF), proposals and business plans (DOCX/PDF), research, go-to-market strategy, fundraising strategy and financial models (XLSX).",
   "author": {
     "name": "Jonas Awasthi",
     "url": "https://github.com/jonasawasthi"
@@ -9,5 +9,5 @@
   "homepage": "https://github.com/jonasawasthi/startup-skills",
   "repository": "https://github.com/jonasawasthi/startup-skills",
   "license": "MIT",
-  "keywords": ["startup", "pitch-deck", "investor", "fundraising", "business-plan", "market-research", "pptx", "docx", "xlsx", "pdf"]
+  "keywords": ["startup", "pitch-deck", "investor", "fundraising", "business-plan", "market-research", "go-to-market", "customer-discovery", "pptx", "docx", "xlsx", "pdf"]
 }

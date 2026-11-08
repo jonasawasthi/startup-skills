@@ -140,8 +140,13 @@ def cmd_deck(a):
 
 
 def cmd_doc(a):
+    import yaml
     from .docs.build import build
-    rep = build(a.source, a.out, tuple(a.formats.split(",")))
+    try:
+        rep = build(a.source, a.out, tuple(a.formats.split(",")))
+    except yaml.YAMLError as e:
+        print(f"  ERROR   front matter of {a.source} is not valid YAML; quote values that contain ': '\n{e}")
+        return 1
     print(f"theme: {rep['theme']} | cited evidence: {len(rep['cited'])} | errors: {rep['errors']} | warnings: {rep['warnings']}")
     _print_issues(rep["issues"], True)
     for k, v in rep["outputs"].items():
@@ -196,6 +201,170 @@ def cmd_preview(a):
     for p in previews(a.pdf, a.out or os.path.dirname(os.path.abspath(a.pdf)), a.dpi, a.per_sheet, a.cols):
         print(p)
     return 0
+
+
+def cmd_gtm(a):
+    from . import gtm
+    if a.action == "check":
+        from .docs.markdown import split_front_matter
+        from .evidence import Ledger
+        with open(a.file) as f:
+            text = f.read()
+        ledger = None
+        prof = a.profile
+        if not prof:
+            meta, _ = split_front_matter(text)
+            ev = meta.get("evidence") or (os.path.join(meta["profile"], "evidence.yaml") if meta.get("profile") else None)
+            if ev:
+                ledger = Ledger.load(ev if os.path.isabs(ev) else os.path.join(os.path.dirname(os.path.abspath(a.file)), ev))
+        else:
+            ledger = Ledger.load(os.path.join(prof, "evidence.yaml"))
+        issues = gtm.check_claims(text, ledger, os.path.basename(a.file))
+        for i in issues:
+            print(f"  {i['level'].upper():7} {i['message']}")
+        errs = sum(1 for i in issues if i["level"] == "error")
+        print(f"{errs} errors, {sum(1 for i in issues if i['level'] == 'warning')} warnings"
+              + ("" if ledger is not None else " (no ledger: citations not resolved)"))
+        return 1 if errs else 0
+    try:
+        rep = gtm.analyze(a.file)
+    except ValueError as e:
+        print(f"  ERROR   {e}")
+        return 1
+    stem = os.path.splitext(os.path.basename(a.file))[0]
+    out = a.out or os.path.dirname(os.path.abspath(a.file))
+    os.makedirs(out, exist_ok=True)
+    if a.action == "kpi":
+        info = gtm.kpi_workbook(rep, os.path.join(out, f"{stem}-kpi-dashboard.xlsx"), a.weeks)
+        print(f"wrote {info['path']} ({info['kpis']} KPIs, {len(info['inputs'])} weekly inputs, "
+              f"{info['formulas']} formulas)")
+        return 0
+    md_path = os.path.join(out, f"{stem}-analysis.md")
+    with open(md_path, "w") as f:
+        f.write(gtm.analysis_md(rep))
+    js = {k: v for k, v in rep.items() if k != "_spec"}
+    for c in js["channels"]:
+        c.pop("spec", None)
+    if js.get("marketplace"):
+        js["marketplace"] = {k: v for k, v in js["marketplace"].items() if k != "spec"}
+    js["roadmap"] = [{k: v for k, v in p.items() if k != "spec"} for p in js["roadmap"]]
+    with open(os.path.join(out, f"{stem}-analysis.json"), "w") as f:
+        json.dump(js, f, indent=2, default=str)
+    prim = [c["name"] for c in rep["channels"] if c["decision"] == "primary"]
+    computed = sum(1 for m in rep["metrics"] if m["value"] is not None)
+    print(f"company: {rep['company']} | stage: {rep['stage']} | model: {', '.join(rep['types'])}")
+    print(f"primary channels: {', '.join(prim) or 'none'} | metrics computed: {computed}/{len(rep['metrics'])}"
+          f" | errors: {rep['errors']} | warnings: {rep['warnings']}")
+    for i in rep["issues"]:
+        print(f"  {i['level'].upper():7} {i['area']}: {i['message']}")
+    print(f"wrote {md_path} and .json")
+    return 1 if rep["errors"] else 0
+
+
+def cmd_discovery(a):
+    from . import customer_discovery as cd
+    if a.action == "check":
+        from .docs.markdown import split_front_matter
+        from .evidence import Ledger
+        with open(a.file) as f:
+            text = f.read()
+        rep, ledger = None, None
+        if a.spec:
+            rep = cd.analyze(a.spec)
+            ledger = Ledger.load(os.path.join(rep["profile_dir"], "evidence.yaml")) if rep["profile_dir"] else None
+        if ledger is None:
+            meta, _ = split_front_matter(text)
+            prof = a.profile or meta.get("profile")
+            if prof:
+                prof = prof if os.path.isabs(prof) or a.profile else os.path.join(os.path.dirname(os.path.abspath(a.file)), prof)
+                ledger = Ledger.load(os.path.join(prof, "evidence.yaml"))
+        issues = cd.check_document(text, ledger, rep, os.path.basename(a.file))
+        for i in issues:
+            print(f"  {i['level'].upper():7} {i['message']}")
+        errs = sum(1 for i in issues if i["level"] == "error")
+        print(f"{errs} errors, {sum(1 for i in issues if i['level'] == 'warning')} warnings"
+              + ("" if rep is not None else " (no --spec: quotations and counts not checked against the research)"))
+        return 1 if errs else 0
+    try:
+        if a.action == "analyze" and a.record:
+            added = cd.record(a.file)
+            print(f"ledger: recorded {len(added)} new entr{'y' if len(added) == 1 else 'ies'}"
+                  + (f" ({', '.join(added)})" if added else ""))
+        rep = cd.analyze(a.file)
+    except ValueError as e:
+        print(f"  ERROR   {e}")
+        return 1
+    stem = os.path.splitext(os.path.basename(a.file))[0]
+    out = a.out or os.path.dirname(os.path.abspath(a.file))
+    os.makedirs(out, exist_ok=True)
+    written = []
+    if a.action == "analyze":
+        p = os.path.join(out, f"{stem}-analysis.md")
+        with open(p, "w") as f:
+            f.write(cd.analysis_md(rep))
+        js = {k: v for k, v in rep.items() if k not in ("_spec",)}
+        for key in ("segments", "hypotheses", "experiments"):
+            js[key] = [{k: v for k, v in r.items() if k != "spec"} for r in js[key]]
+        with open(os.path.join(out, f"{stem}-analysis.json"), "w") as f:
+            json.dump(js, f, indent=2, default=str)
+        written += [p, p.replace(".md", ".json")]
+    elif a.action == "interviews":
+        segs = rep["_spec"].get("segments", []) or []
+        for s in segs:
+            if a.segment and str(s.get("id")) != a.segment:
+                continue
+            g = os.path.join(out, f"interview-guide-{str(s.get('id')).lower()}.md")
+            with open(g, "w") as f:
+                f.write(cd.interview_guide(rep["_spec"], s))
+            n = os.path.join(out, f"interview-notes-template-{str(s.get('id')).lower()}.md")
+            with open(n, "w") as f:
+                f.write(cd.notes_template(rep["_spec"], s))
+            iss, st = cd.lint_guide(open(g).read())
+            bad = [i for i in iss if i["level"] == "error"]
+            print(f"  {s.get('id')}: {st['questions']} questions, {st['past_behaviour']} about past behaviour, "
+                  f"{len(bad)} flagged")
+            written += [g, n]
+    elif a.action == "hypotheses":
+        p = os.path.join(out, f"{stem}-hypotheses.md")
+        with open(p, "w") as f:
+            f.write("## Hypothesis register\n\n" + "\n".join(cd.hypothesis_table(rep)))
+        written.append(p)
+        if a.xlsx:
+            written.append(cd.hypotheses_workbook(rep, os.path.join(out, f"{stem}-hypotheses.xlsx")))
+        if rep["unregistered"]:
+            print(f"  {len(rep['unregistered'])} ledger assumptions are not yet covered by a hypothesis")
+    elif a.action == "experiment":
+        p = os.path.join(out, f"{stem}-experiments.md")
+        with open(p, "w") as f:
+            f.write("## Experiment plans\n\n" + "\n".join(cd.experiment_cards(rep, a.id)))
+        written.append(p)
+    elif a.action == "report":
+        secs = a.sections.split(",") if a.sections else None
+        try:
+            md = cd.report_md(rep, out, secs)
+        except ValueError as e:
+            print(f"  ERROR   {e}")
+            return 1
+        name = f"{stem}-report.md" if not secs else f"{stem}-{'-'.join(secs)}.md"
+        p = os.path.join(out, name)
+        with open(p, "w") as f:
+            f.write(md)
+        written.append(p)
+        from .evidence import Ledger
+        led = Ledger.load(os.path.join(rep["profile_dir"], "evidence.yaml")) if rep["profile_dir"] else None
+        for i in cd.check_document(md, led, rep, name):
+            if i["level"] == "error":
+                rep["issues"].append({"level": "error", "area": "report", "message": i["message"]})
+                rep["errors"] += 1
+        print(f"  next: startup-kit doc {p} --out {out}")
+    print(f"company: {rep['company']} | interviews: {len(rep['interviews'])} | hypotheses: {len(rep['hypotheses'])} | "
+          f"experiments: {len(rep['experiments'])} | errors: {rep['errors']} | warnings: {rep['warnings']}")
+    print(f"problem-solution fit: {rep['psf']['verdict']}")
+    for i in rep["issues"]:
+        print(f"  {i['level'].upper():7} {i['area']}: {i['message']}")
+    for w in written:
+        print(f"wrote {w}")
+    return 1 if rep["errors"] else 0
 
 
 def cmd_themes(a):
@@ -264,6 +433,27 @@ def main(argv=None):
     sp.add_argument("--per-sheet", type=int, default=8)
     sp.add_argument("--cols", type=int, default=2)
     sp.set_defaults(fn=cmd_preview)
+    sp = sub.add_parser("gtm", help="go-to-market: analyze spec | kpi workbook | check strategy claims")
+    sp.add_argument("action", choices=["analyze", "kpi", "check"])
+    sp.add_argument("file", help="GTM spec YAML (analyze, kpi) or strategy Markdown (check)")
+    sp.add_argument("--out")
+    sp.add_argument("--profile", help="check: profile directory whose ledger resolves citations")
+    sp.add_argument("--weeks", type=int, default=26, help="kpi: weeks in the tracker")
+    sp.set_defaults(fn=cmd_gtm)
+    sp = sub.add_parser("discovery", help="customer discovery: analyze | interviews | hypotheses | experiment | "
+                                          "report | check")
+    sp.add_argument("action", choices=["analyze", "interviews", "hypotheses", "experiment", "report", "check"])
+    sp.add_argument("file", help="discovery spec YAML (check: a Markdown document or interview guide)")
+    sp.add_argument("--out")
+    sp.add_argument("--record", action="store_true", help="analyze: append ledger entries for unrecorded "
+                                                          "interviews and surveys (never edits existing entries)")
+    sp.add_argument("--segment", help="interviews: one segment id")
+    sp.add_argument("--xlsx", action="store_true", help="hypotheses: also write an XLSX register")
+    sp.add_argument("--id", help="experiment: one experiment id")
+    sp.add_argument("--sections", help="report: comma-separated subset, e.g. problems,wtp,psf")
+    sp.add_argument("--spec", help="check: discovery spec whose notes verify quotations and counts")
+    sp.add_argument("--profile", help="check: profile directory whose ledger resolves citations")
+    sp.set_defaults(fn=cmd_discovery)
     sub.add_parser("themes", help="list design themes").set_defaults(fn=cmd_themes)
     a = p.parse_args(argv)
     return a.fn(a) or 0

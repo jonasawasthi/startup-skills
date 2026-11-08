@@ -2,7 +2,10 @@
 """Re-verify every URL cited in knowledge/ (front matter and inline links).
 
 Checks HTTP status *and* page title, because some sites (e.g. the YC Library)
-route by ID prefix and return 200 for a wrong slug.  Usage:
+route by ID prefix and return 200 for a wrong slug, and others (e.g. closed
+firms' blogs) redirect every old URL to their homepage.  When a knowledge file
+lists ``sources:`` in its front matter with a ``title`` per URL, the live page
+title must contain most of the expected title's significant words.  Usage:
     python3 scripts/check_links.py [--only-frontmatter] [--timeout 15]
 """
 import argparse
@@ -17,6 +20,38 @@ import urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL_RE = re.compile(r"https?://[^\s)>\]\"'`]+")
 UA = "Mozilla/5.0 (compatible; startup-skills-linkcheck/1.0)"
+
+
+def expected_titles():
+    """url -> expected title, from `sources:` lists in knowledge front matter."""
+    import yaml
+    out = {}
+    for p in glob.glob(os.path.join(ROOT, "knowledge", "**", "*.md"), recursive=True):
+        text = open(p, encoding="utf-8").read()
+        if not text.startswith("---"):
+            continue
+        try:
+            fm = yaml.safe_load(text.split("\n---", 1)[0][3:]) or {}
+        except yaml.YAMLError:
+            continue
+        for s in fm.get("sources") or []:
+            if isinstance(s, dict) and s.get("url") and s.get("title"):
+                out[str(s["url"])] = str(s["title"])
+    return out
+
+
+def _words(s):
+    s = s.lower().replace("’", "'").replace("‘", "'")
+    return [w for w in re.findall(r"[a-z0-9]+", s.replace("'", "")) if len(w) > 2]
+
+
+def title_matches(expected, actual, threshold=0.6):
+    """True when most significant words of the expected title appear in the live title."""
+    want = set(_words(expected))
+    if not want:
+        return True
+    have = set(_words(actual))
+    return len(want & have) / len(want) >= threshold
 
 
 def collect(only_fm):
@@ -58,16 +93,19 @@ def main():
     ap.add_argument("--timeout", type=int, default=15)
     a = ap.parse_args()
     urls = collect(a.only_frontmatter)
+    titles = expected_titles()
     bad = 0
     with cf.ThreadPoolExecutor(8) as ex:
         results = dict(zip(urls, ex.map(lambda u: fetch(u, a.timeout), urls)))
     for u in sorted(urls):
         status, title = results[u]
-        ok = 200 <= status < 400 and slug_matches(u, title)
+        ok = 200 <= status < 400 and slug_matches(u, title) and (u not in titles or title_matches(titles[u], title))
         flag = "OK  " if ok else ("BLOCK" if status in (401, 403, 429) else "NET " if status == 0 else "FAIL")
         if flag == "FAIL":
             bad += 1
         print(f"{flag} {status:>3} {u}  — {title[:70]}")
+        if 200 <= status < 400 and u in titles and not title_matches(titles[u], title):
+            print(f"        expected title: {titles[u]}")
         if flag != "OK  ":
             print(f"        cited in: {', '.join(sorted(urls[u]))}")
     print(f"\n{len(urls)} URLs checked, {bad} failing (NET = network/TLS error on this machine, re-check with curl; BLOCK = bot protection)")
