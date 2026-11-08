@@ -18,7 +18,8 @@ python3 scripts/validate_skills.py    # skill spec compliance
 4. **Skills follow the Agent Skills spec**: portable front matter only (`name`, `description`, `license`, `compatibility`, `metadata`), the name equals the directory, SKILL.md has fewer than 500 lines, and references are one level deep.
 5. **Mechanics belong in code, judgement in Markdown.** Deterministic logic (arithmetic, layout, validation) goes in `lib/startup_kit` with tests.
 6. **Research data is never fabricated.** Examples of interviews, quotes or survey answers must be fictional, labelled as illustrative, and use pseudonymous participant codes. Real research notes stay in `outputs/`.
-7. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
+7. **Business model examples never assert viability.** Prices, costs and volumes in examples carry an evidence status; payment providers are dependencies, not assumptions; and no example may claim liquidity, revenue or willingness to pay without (fictional, labelled) evidence.
+8. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
 
 ## Pull requests
 

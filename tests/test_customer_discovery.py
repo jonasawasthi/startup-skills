@@ -84,7 +84,8 @@ def test_skill_discovered_and_registered(root):
     assert fm["name"] == SKILL and len(fm["description"]) <= 1024 and "Use when" in fm["description"]
     r = subprocess.run([sys.executable, os.path.join(root, "scripts", "validate_skills.py")], capture_output=True,
                        text=True)
-    assert r.returncode == 0 and "8 skills, 0 errors" in r.stdout, r.stdout
+    m = re.search(r"(\d+) skills, 0 errors", r.stdout)
+    assert r.returncode == 0 and m and int(m.group(1)) >= 8, r.stdout     # later skills may be added
     plugin = json.load(open(os.path.join(root, ".claude-plugin", "plugin.json")))
     market = json.load(open(os.path.join(root, ".claude-plugin", "marketplace.json")))
     assert "skills" not in plugin and market["plugins"][0]["version"] == plugin["version"]
@@ -96,9 +97,9 @@ def test_skill_discovered_and_registered(root):
 def test_existing_skills_untouched_by_name(root):
     names = sorted(os.path.basename(os.path.dirname(p)) for p in glob.glob(os.path.join(root, "skills", "*",
                                                                                          "SKILL.md")))
-    assert names == ["business-document-generator", "customer-discovery-validation", "fundraising-strategist",
-                     "gtm-strategy-maker", "pitch-deck-maker", "startup-idea-evaluator", "startup-proposal-generator",
-                     "startup-research"]
+    assert {"business-document-generator", "customer-discovery-validation", "fundraising-strategist",
+            "gtm-strategy-maker", "pitch-deck-maker", "startup-idea-evaluator", "startup-proposal-generator",
+            "startup-research"} <= set(names)
 
 
 # ----------------------------------------------------------------------------- segments

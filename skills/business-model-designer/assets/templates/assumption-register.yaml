@@ -1,0 +1,18 @@
+# Assumption register template (paste under `assumptions:` in the spec).
+# Status rules: 'supported' needs customer evidence; wtp/pricing/revenue need committed or paid signals;
+# volume/retention/liquidity/margins/acquisition need measured data; costs/payments/regulatory need documents.
+# `business-model assumptions <spec> --record` appends untested items to the ledger (append-only, idempotent).
+assumptions:
+  - id: A1
+    description: ""          # one testable sentence
+    category: wtp            # wtp | pricing | revenue | acquisition | retention | costs | margins | volume |
+                             # liquidity | partnerships | payments | operations | regulatory
+    why: ""                  # why the model depends on it
+    impact: high             # impact if false: high | medium | low
+    evidence: []             # ledger ids
+    contradicting: []        # ledger ids; never drop them
+    conflict_note: ""        # required to mark 'supported' when contradicting evidence exists
+    validation: ""           # how it will be tested
+    status: untested         # untested | testing | supported | contradicted | inconclusive
+    hypothesis: ""           # discovery register id, e.g. H4
+    owner: founder

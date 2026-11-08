@@ -1042,7 +1042,8 @@ def experiment_cards(rep: Dict, only: Optional[str] = None) -> List[str]:
 def report_md(rep: Dict, out_dir: str, sections: Optional[List[str]] = None, title: str = "") -> str:
     spec = rep["_spec"]
     d = spec.get("discovery", {}) or {}
-    prof = os.path.relpath(rep["profile_dir"], out_dir) if rep["profile_dir"] else None
+    # realpath both sides: on macOS /var is a symlink to /private/var, so a plain relpath can walk out of the wrong tree
+    prof = os.path.relpath(os.path.realpath(rep["profile_dir"]), os.path.realpath(out_dir)) if rep["profile_dir"] else None
     fm = {"title": title or "Customer discovery report",
           "subtitle": d.get("subtitle", "What customers told us, what we know, and what we still need to test"),
           "company": rep["company"], "date": d.get("date", _dt.date.today().strftime("%B %Y")),

@@ -1,3 +1,49 @@
+# QA report — v1.3.0 (2026-11-08)
+
+## Automated checks (v1.3.0)
+
+| Check | Command | Result |
+|---|---|---|
+| Full test suite, including the live link check | `STARTUP_KIT_NETWORK=1 .venv/bin/python -m pytest` | 227 passed (146 earlier + 81 business model) |
+| Business model tests | `.venv/bin/python -m pytest tests/test_business_model.py` | 81 passed |
+| Agent Skills spec compliance | `python3 scripts/validate_skills.py` | 9 skills, 0 errors |
+| Plugin and marketplace manifests | `claude plugin validate .` (Claude Code 2.1.270) | Passed |
+| Knowledge-base URLs (status + `sources:` title relevance) | `python3 scripts/check_links.py` | 127 URLs, 0 failing; 1 Python TLS error on techstars.com (pre-existing; a network/TLS issue, not a dead link) |
+| Plugin discovery | headless `claude -p … --plugin-dir .` | All nine `startup-skills:*` skills listed |
+| Skill loading and refusal (agent) | Live session invoked `business-model-designer`, ran its setup (`doctor`), then was asked to assume Stripe for a Nepal company, call liquidity achieved with no sales, and project next year's revenue | Toolkit healthy; declined all three, registered Stripe as an unverified dependency, offered labelled what-if arithmetic instead. A first answer added an unverified regulatory reason; SKILL.md now requires reporting only what the source says, and a re-run did so |
+| Document builds | `business-model report … --xlsx`, `doc`, `check`, `preview` on the Fieldnote example | 0 errors; DOCX, PDF (23 pages) and XLSX (7 sheets, recalculated) pass `check`; previews inspected |
+
+## business-model-designer: coverage by requirement
+
+| Requirement | Tests |
+|---|---|
+| Canvas: nine blocks, missing blocks, evidence preserved, assumptions distinct | `test_canvas_nine_blocks_and_basis_counts`, `test_canvas_missing_and_unknown_blocks`, `test_canvas_evidence_preserved_in_report`, `test_canvas_assumptions_stay_distinct_from_evidence` (6 cases), `test_internal_block_accepts_document_evidence` |
+| Value propositions: per segment, hypotheses labelled, unsupported claims flagged | `test_value_propositions_per_segment_and_fit_ladder`, `test_value_proposition_flags_unsupported_claims`, `test_product_existence_may_cite_code` |
+| Revenue: multiple streams, proposed vs actual, no fabricated inputs, GMV vs platform revenue | `test_multiple_revenue_streams_and_stage_ladder`, `test_proposed_pricing_is_never_revenue`, `test_financials_never_fabricate_missing_inputs`, `test_gmv_and_platform_revenue_are_never_confused` |
+| Costs: fixed vs variable, unknowns stay unknown, correct inputs | `test_costs_fixed_variable_unknown`, `test_cost_numbers_need_provenance` |
+| Marketplace: sides, registered vs active, matches vs completed, seller earnings, take rate, liquidity | `test_marketplace_supply_and_demand_are_separate`, `test_registered_users_are_not_active_users`, `test_matches_are_not_completed_transactions`, `test_seller_earnings_and_take_rate`, `test_liquidity_claims_require_measured_evidence`, `test_supply_does_not_create_demand_by_assumption` |
+| Alternatives: comparison, defined scales, numeric rankings rejected | `test_alternatives_compared_on_defined_scales`, `test_unsupported_rankings_rejected` (6 cases), `test_custom_scale_must_be_defined_and_decisions_reasoned` |
+| Assumptions: append-only, idempotent, founder opinion, conflicts | `test_record_is_append_only_and_idempotent`, `test_assumption_status_discipline` (7 cases), `test_supported_assumptions_with_real_evidence_pass`, `test_conflicting_evidence_stays_visible`, `test_assumption_cannot_outrun_discovery_register` |
+| Stress tests: downside, missing inputs, probabilities rejected | `test_stress_downside_and_thresholds`, `test_stress_missing_inputs_stay_explicit`, `test_stress_rejects_probabilities_and_unfounded_changes` |
+| Nepal and international payments, regulatory uncertainty | `test_payment_provider_availability_is_never_assumed`, `test_qr_visitor_payments_are_not_international_checkout`, `test_regulatory_uncertainty_is_explicit` |
+| Maturity never exceeds evidence | `test_maturity_never_exceeds_evidence` |
+| Document guard | `test_document_guard_rejects` (9 cases), `test_document_guard_accepts` (9 cases) |
+| Reports and CLI | `test_report_sections_and_front_matter`, `test_cli_end_to_end` (every command, `--segment`, `--model`, `--sections`, `--format json`, `--xlsx`, doc, check), `test_cli_design_inventory_and_record`, `test_cli_reports_bad_yaml_and_bad_options_cleanly` |
+| Packaging, knowledge, privacy | `test_skill_discovered_and_registered`, `test_all_nine_skills_present`, `test_knowledge_base_topics_and_source_verification`, `test_private_outputs_are_gitignored_and_public_files_are_clean` |
+
+## Defects found while building and validating (all fixed, with regression tests)
+
+1. Unquoted commas inside YAML `{flow: mappings}` silently truncated text (for example "Payments, settlement and disputes" became "Payments", and "NPR 499–1,999" lost "999"). The engine now reports every key without a value (`test_unquoted_comma_in_flow_mapping_is_reported`).
+2. The shared GTM claim guard read ID codes followed by a noun ("D2 learners", "A3 teachers") as traction counts. The number must now stand alone (`test_id_codes_are_not_traction_claims`).
+3. Discovery and business model reports wrote a front-matter `profile` path relative to an unresolved output folder; on macOS (`/var` → `/private/var`) the document builder then could not find the ledger. Paths are now computed from real paths (`test_report_profile_path_survives_symlinked_output`).
+4. A value-map product backed by codebase evidence was rejected as a customer claim; a product's existence may cite code, its effect on customers may not (`test_product_existence_may_cite_code`).
+5. SaaS plus subscription was labelled a hybrid, and SaaS stress tests showed "seller earnings" of 0 (`test_saas_is_not_a_hybrid_and_has_no_seller`).
+6. The document guard flagged the engine's own disclaimer ("Nothing here is legal … advice") and "unverified" did not count as a hedge for payment claims; both fixed and covered by `test_document_guard_accepts`.
+7. Ledger-assumption citations in revenue details came after the status label, so `doc` warned about unqualified assumptions; the status now precedes the citation.
+8. The starter spec from `business-model design` ignored `traction.*` ledger keys; they now map to Revenue Streams, keeping their status (`test_cli_design_inventory_and_record`).
+
+---
+
 # QA report — v1.2.0 (2026-11-08)
 
 ## Automated checks (v1.2.0)

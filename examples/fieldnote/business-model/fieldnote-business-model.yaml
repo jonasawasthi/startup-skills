@@ -1,0 +1,284 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company. Every customer, price, cost and result below is invented to
+# illustrate the business-model-designer skill, and is labelled with its evidence status.
+design:
+  company: Fieldnote (fictional example)
+  profile: ../startup-profile
+  discovery: ../customer-discovery/fieldnote-discovery.yaml
+  stage: seed
+  date: November 2026
+  currency: USD
+  geography: [Launch country (fictional)]
+  types: [saas, subscription, b2b]
+  recommended: M1
+  illustrative: "Fictional example: all customers, prices, costs and results are invented for illustration."
+  summary: >-
+    In this fictional example Fieldnote sells a cooperative management subscription. Five pilots pay monthly [E-007]
+    and three prepaid an annual plan in an experiment [E-017], so the subscription stream is generating revenue. The
+    model is not yet economically demonstrated: support and delivery costs are estimates, and renewals have not been
+    measured. A processor data product and a milk-trade marketplace were considered; the first stays a viable
+    option, the second is rejected for now.
+  decision: >-
+    Commit to the cooperative subscription (M1) for the next two quarters. Do not build the processor product until
+    processors confirm a costly planning problem (H7), and do not pursue the marketplace (M3).
+  next_steps:
+    - Measure support hours per cooperative for 8 weeks to replace the support-cost assumption
+    - Track renewals of the first annual cohort (A1)
+    - Ask a payment provider in the launch country to confirm card acceptance and settlement terms (D2)
+
+canvas:
+  customer_segments:
+    rationale: Segment narrowed after discovery interviews.
+    items:
+      - {text: Managers of mid-size dairy cooperatives without an in-house accountant, basis: evidence, evidence: [E-010, E-011, E-013], contradicting: [E-012], rationale: "I-03 has an accountant and did not report the problem"}
+      - {text: "Field agents who record deliveries (users, not buyers)", basis: evidence, evidence: [E-014, E-015]}
+      - {text: Dairy processors buying from several cooperatives, basis: hypothesis, hypothesis: H7}
+  value_propositions:
+    items:
+      - {text: Month-end payment reconciliation in hours instead of days, basis: evidence, evidence: [E-010, E-011, E-013]}
+      - {text: Offline delivery capture that replaces paper slips, basis: evidence, evidence: [E-014, E-015]}
+      - {text: Fewer payment disputes with members, basis: hypothesis, hypothesis: H2}
+  channels:
+    items:
+      - {text: Founder-led sales to cooperative managers, basis: founder}
+      - {text: Regional federation introductions, basis: hypothesis, hypothesis: H5}
+  customer_relationships:
+    items:
+      - {text: Done-with-you onboarding of the first payment cycle, basis: founder}
+      - {text: Monthly check-in call during the first quarter, basis: recommendation, rationale: Retention is untested and high impact}
+  revenue_streams:
+    items:
+      - {text: Cooperative subscription paid monthly or annually, basis: evidence, evidence: [E-017]}
+      - {text: Processor data subscription, basis: hypothesis, hypothesis: H7}
+  key_resources:
+    items:
+      - {text: Offline-first mobile app and manager console, basis: evidence, evidence: [E-002]}
+      - {text: Relationships with pilot cooperatives, basis: founder}
+  key_activities:
+    items:
+      - {text: Onboarding and first-cycle support, basis: founder}
+      - {text: Product development of reconciliation features, basis: founder}
+  key_partnerships:
+    items:
+      - {text: Regional cooperative federations, basis: hypothesis, hypothesis: H5}
+      - {text: Payment provider for card payments, basis: unknown}
+  cost_structure:
+    items:
+      - {text: Founder salaries (largest cost), basis: founder}
+      - {text: Hosting and data storage, basis: founder}
+      - {text: Onboarding travel per new cooperative, basis: hypothesis}
+
+value_propositions:
+  - segment: S1
+    customer_profile:
+      jobs:
+        - {id: J1, text: Pay every member correctly and on time at month-end, basis: evidence, evidence: [E-010, E-011]}
+      pains:
+        - {id: P1, text: Reconciliation takes several days each month, basis: evidence, evidence: [E-010, E-011, E-013], contradicting: [E-012]}
+        - {id: P2, text: Payment errors cause member complaints, basis: hypothesis, hypothesis: H2}
+      gains:
+        - {id: G1, text: Board trusts the monthly numbers, basis: hypothesis}
+    value_map:
+      products:
+        - {text: Manager console with automatic reconciliation, basis: founder}
+      pain_relievers:
+        - {id: R1, text: Deliveries reconcile automatically against payments, basis: founder, addresses: [P1]}
+        - {id: R2, text: Each payment line links to its delivery records, basis: hypothesis, addresses: [P2]}
+      gain_creators:
+        - {id: C1, text: One-page monthly report for the board, basis: hypothesis, addresses: [G1]}
+  - segment: S2
+    customer_profile:
+      jobs:
+        - {id: J1, text: Record each delivery so disputes can be settled, basis: evidence, evidence: [E-014, E-015]}
+      pains:
+        - {id: P1, text: Paper slips get lost or smudged, basis: evidence, evidence: [E-014, E-015]}
+      gains:
+        - {id: G1, text: Fewer arguments with farmers at collection, basis: hypothesis}
+    value_map:
+      products:
+        - {text: Offline mobile app for field agents, basis: evidence, evidence: [E-002]}
+      pain_relievers:
+        - {id: R1, text: Records are stored on the phone and sync later, basis: evidence, evidence: [E-016], addresses: [P1]}
+      gain_creators:
+        - {id: C1, text: Farmers receive an SMS receipt, basis: hypothesis, addresses: [G1]}
+
+revenue_streams:
+  - id: R1
+    name: Cooperative subscription (monthly)
+    payer: S1
+    value: Reconciliation, member records and offline delivery capture for one cooperative
+    mechanism: subscription
+    billing: monthly
+    structure: One invoice per cooperative per month, paid by bank transfer
+    recognition: Recognised monthly as the service is delivered (assumption to confirm with an accountant)
+    price: {value: 40, currency: USD, evidence: [E-007]}
+    stage: generating
+    evidence: [E-007, E-017]
+    dependencies: [D1]
+    risks: Renewal behaviour is unmeasured; price set during pilots
+  - id: R2
+    name: Cooperative subscription (annual prepaid)
+    payer: S1
+    value: The same service, paid a year ahead with a 30-day refund window
+    mechanism: subscription
+    billing: annual
+    structure: One annual invoice; refundable within 30 days
+    recognition: Cash received up front; revenue recognised monthly over the year (assumption to confirm)
+    price: {value: 400, currency: USD, evidence: [E-017]}
+    stage: generating
+    evidence: [E-017]
+    dependencies: [D1]
+    risks: Only friendly early adopters have prepaid; the refund window lowers the commitment
+  - id: R3
+    name: Processor data subscription
+    payer: S3
+    value: Verified delivery volumes across cooperatives for collection planning
+    mechanism: subscription
+    billing: monthly
+    structure: Per processor, priced by the number of cooperatives covered (hypothesis)
+    recognition: Not yet defined
+    stage: proposed
+    dependencies: [D3]
+    risks: Needs cooperative consent to share data; processor pain is untested (H7)
+
+costs:
+  - {id: C1, name: Hosting and data storage, category: fixed, type: infrastructure, amount: {value: 180, unit: USD per month, status: estimate, basis: "Provider price list for current usage (fictional)"}}
+  - {id: C2, name: Founder and team salaries, category: fixed, type: personnel, notes: Not yet set; founders are unpaid}
+  - {id: C3, name: Bank transfer fees, category: variable, type: payment-processing, driver: per invoice, notes: Paid by the cooperative today; unknown for card payments}
+  - {id: C4, name: Onboarding travel, category: variable, type: acquisition, driver: per new cooperative, amount: {value: 60, unit: USD per new cooperative, status: assumption}}
+  - {id: C5, name: Support time, category: semi-variable, type: support, driver: hours per cooperative per month, notes: To be measured (next step 1)}
+  - {id: C6, name: Federation training day, category: fixed, type: acquisition, amount: {value: 1500, unit: USD per event, status: estimate, basis: "Experiment X3 budget (venue and travel)"}}
+
+dependencies:
+  - {id: D1, name: Bank transfer invoicing, type: payment, country: Launch country (fictional), status: verified, evidence: [E-017], question: "", confirm_with: [bank]}
+  - {id: D2, name: Card payments through a licensed payment provider, type: payment, country: Launch country (fictional), status: unverified, question: "Which provider will accept card payments for a locally registered company, at what fee and settlement time?", confirm_with: [payment-provider]}
+  - {id: D3, name: Rules for sharing cooperative delivery data with processors, type: regulatory, country: Launch country (fictional), status: unverified, question: "What consent and data-protection obligations apply to sharing member delivery data?", confirm_with: [legal]}
+  - {id: D4, name: Regional federation partnership, type: partner, status: unverified, question: "Will a federation introduce members, and on what terms?", confirm_with: [partner]}
+
+assumptions:
+  - {id: A1, description: Paying cooperatives renew after the first year, category: retention, why: The subscription only works if cooperatives stay, impact: high, evidence: [E-009], validation: Track renewals of the first annual cohort, status: untested, hypothesis: H6}
+  - {id: A2, description: Pilots prepay USD 400 for an annual plan, category: wtp, why: Prepayment funds onboarding, impact: high, evidence: [E-017], validation: Pre-order offer (experiment X1), status: supported, hypothesis: H3}
+  - {id: A3, description: Federations introduce member cooperatives, category: acquisition, why: Founder-led sales alone does not scale, impact: high, validation: Federation training day (X3), status: untested, hypothesis: H5}
+  - {id: A4, description: Bank transfer collection works for annual invoices, category: payments, why: Collection must not depend on cards, impact: medium, evidence: [E-017], validation: Three annual invoices paid, status: supported}
+  - {id: A5, description: Processors pay for verified delivery volumes, category: revenue, why: Required for model M2, impact: medium, validation: Problem interviews with 5 processors, status: untested, hypothesis: H7}
+  - {id: A6, description: Support stays below 2 hours per cooperative per month after onboarding, category: costs, why: Support time drives contribution, impact: high, validation: Log support hours for 8 weeks, status: untested}
+  - {id: A7, description: One founder can onboard 4 cooperatives a month, category: operations, why: Onboarding capacity caps growth, impact: medium, validation: Time the next 4 onboardings, status: untested}
+
+marketplace:
+  applies_to: M3
+  type: two-sided
+  sides:
+    - {segment: S1, role: supply, acquisition: Existing Fieldnote cooperatives, value: Buyers for surplus milk, pays: Nothing (hypothesis)}
+    - {segment: S3, role: demand, acquisition: Introductions from pilot cooperatives, value: Verified supply volumes, pays: A commission on each trade (hypothesis)}
+  matching: Processors post volume requests; cooperatives accept
+  trust_safety: Volumes verified from Fieldnote delivery records
+  transaction_flow: Not designed
+  leakage: Weak; cooperatives and processors already know each other
+  cold_start: {first_side: S1, plan: Start with existing cooperatives}
+  network_effects: Cross-side, untested
+  pricing: Processors pay; cooperatives free
+  take_rate: {value: 0.01, status: assumption}
+  payments: {collection: Not designed (would need D2), payout: Not designed, refunds: Not designed, disputes: Not designed, fee_bearer: platform}
+  liquidity: {status: not-measured}
+
+alternatives:
+  - id: M1
+    name: Cooperative subscription
+    types: [saas, subscription, b2b]
+    fit: Cooperatives pay for a recurring monthly job (reconciliation) and five already pay monthly
+    description: Monthly or annual subscription per cooperative
+    target_customers: Managers of mid-size dairy cooperatives (S1)
+    value_proposition: Faster, accurate month-end payments
+    revenue: R1 and R2
+    costs: Hosting, support and onboarding; mostly founder time today
+    complexity: Low to medium; onboarding is manual
+    capital: Low
+    distribution: Founder-led sales, later federations
+    dependencies: D1 (verified); D2 for card payments later
+    risks: Unmeasured renewals; low price per customer
+    validation: [A1 renewal, A6 support cost, A3 federation channel]
+    tradeoffs: Simple and evidenced, but revenue per customer is small
+    ratings:
+      customer_fit: {level: favourable, why: Problem confirmed in 3 of 4 manager interviews, evidence: [E-010, E-011, E-013]}
+      revenue_clarity: {level: favourable, why: Cooperatives already pay monthly and three prepaid, evidence: [E-007, E-017]}
+      operational_complexity: {level: mixed, why: Onboarding is manual and founder-dependent}
+      capital_needs: {level: favourable, why: No inventory or float; hosting only}
+      distribution: {level: mixed, why: Founder-led sales works but does not scale; federations untested}
+      dependency_risk: {level: favourable, why: Bank transfer collection is proven with paid invoices, evidence: [E-017]}
+      validation_burden: {level: mixed, why: Renewal and support cost still need measurement}
+    decision: recommended
+    decision_reason: The only model with paid evidence; remaining risks are measurable within two quarters
+  - id: M2
+    name: Subscription plus processor data product
+    types: [saas, subscription, licensing, b2b, hybrid]
+    fit: Adds a second paying side that values aggregated delivery data
+    description: M1 plus a data subscription sold to processors
+    target_customers: S1 and S3
+    value_proposition: For processors, verified volumes for collection planning
+    revenue: R1, R2 and R3
+    costs: Data pipeline, consent management, processor sales
+    complexity: High
+    capital: Medium
+    distribution: Introductions from cooperatives
+    dependencies: D3 data-sharing rules
+    risks: Consent; processors may not pay; cooperatives may object
+    validation: [A5 processor willingness to pay, D3 legal confirmation]
+    tradeoffs: Higher revenue per cooperative network, but a second sales motion
+    ratings:
+      customer_fit: {level: unknown, why: No processor interviews yet}
+      revenue_clarity: {level: mixed, why: Processors are the payer only in theory}
+      operational_complexity: {level: unfavourable, why: Two products and two sales motions}
+      capital_needs: {level: mixed, why: Data pipeline before revenue}
+      distribution: {level: mixed, why: Depends on cooperative introductions}
+      dependency_risk: {level: unfavourable, why: Data-sharing rules unconfirmed (D3)}
+      validation_burden: {level: unfavourable, why: Processor pain and legal basis both untested}
+    decision: viable
+    decision_reason: Worth testing with 5 processor interviews after M1 renewals are measured
+  - id: M3
+    name: Milk-trade marketplace
+    types: [marketplace, commission, b2b]
+    fit: Cooperatives sell milk to processors; Fieldnote could match surplus volumes
+    description: Commission on milk trades matched through Fieldnote
+    target_customers: Cooperatives (supply) and processors (demand)
+    value_proposition: Buyers for surplus milk; verified supply for processors
+    revenue: Commission per trade (hypothesis)
+    costs: Payments, settlement, disputes, trust and safety
+    complexity: Very high
+    capital: High (payment float, dispute handling)
+    distribution: Existing cooperatives
+    dependencies: D2 online payments; settlement licence questions
+    risks: Leakage (parties already know each other); payments not available
+    validation: [Processor demand for spot volumes]
+    tradeoffs: Large GMV but thin take rate and heavy operations
+    ratings:
+      customer_fit: {level: unknown, why: No evidence of demand for spot trades}
+      revenue_clarity: {level: unfavourable, why: Leakage makes the commission easy to avoid}
+      operational_complexity: {level: unfavourable, why: "Payments, settlement and disputes"}
+      capital_needs: {level: unfavourable, why: Payment float and dispute handling}
+      distribution: {level: mixed, why: Supply exists among current customers}
+      dependency_risk: {level: unfavourable, why: Online payments unverified (D2)}
+      validation_burden: {level: unfavourable, why: "Demand, payments and regulation all untested"}
+    decision: reject
+    decision_reason: Strong leakage and unverified payments; no demand evidence
+
+stress:
+  inputs:
+    price: {value: 40, evidence: [E-007]}
+    take_rate: {value: 1, status: reported}
+    payment_fee_rate: {value: 0, status: reported}
+    fee_bearer: platform
+    delivery_cost: {value: 3, status: estimate}
+    support_cost: {value: 8, status: assumption}
+    transactions_per_month: {value: 5, evidence: [E-007]}
+    fixed_costs_month: {value: 180, status: estimate}
+    cac: {value: 300, status: assumption}
+    purchases_per_customer: {value: 24, status: assumption}
+    founder_hours_per_week: {value: 20, status: assumption}
+    hours_required_per_week: {value: 26, status: assumption}
+  scenarios:
+    - {name: base, changes: {}, rationale: Inputs as recorded}
+    - {name: downside, changes: {support_cost: {multiply: 2}, transactions_per_month: {add: -1}}, rationale: "Support doubles (as in onboarding month); one pilot cancels"}
+    - {name: best, changes: {transactions_per_month: {set: 20}}, rationale: Federation introductions convert (X3 success threshold)}
+  mitigations:
+    support: Build self-serve onboarding videos before adding cooperatives
+    retention: Monthly check-in calls in the first quarter
+    capacity: Federation-led onboarding days

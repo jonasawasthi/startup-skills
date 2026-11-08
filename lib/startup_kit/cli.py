@@ -367,6 +367,163 @@ def cmd_discovery(a):
     return 1 if rep["errors"] else 0
 
 
+BM_SECTION_ACTIONS = {"canvas": ["canvas"], "value-proposition": ["value-proposition"],
+                      "compare": ["classification", "alternatives"], "revenue": ["revenue", "financials"],
+                      "costs": ["costs"], "marketplace": ["marketplace", "payments"],
+                      "assumptions": ["assumptions"], "stress-test": ["stress"]}
+BM_AREAS = {"canvas": ("canvas",), "value-proposition": ("value-proposition",),
+            "compare": ("alternatives", "classification"), "revenue": ("revenue", "financials", "payments"),
+            "costs": ("costs",), "marketplace": ("marketplace", "payments", "dependencies"),
+            "assumptions": ("assumptions", "discovery"), "stress-test": ("stress",)}
+
+
+def _bm_ledger(rep):
+    from .evidence import Ledger
+    return Ledger.load(os.path.join(rep["profile_dir"], "evidence.yaml")) if rep["profile_dir"] else None
+
+
+def cmd_business_model(a):
+    from . import business_model as bm
+    if a.action == "check":
+        from .docs.markdown import split_front_matter
+        from .evidence import Ledger
+        with open(a.file) as f:
+            text = f.read()
+        rep, ledger = None, None
+        if a.spec:
+            try:
+                rep = bm.analyze(a.spec)
+            except ValueError as e:
+                print(f"  ERROR   {e}")
+                return 1
+            ledger = _bm_ledger(rep)
+        if ledger is None:
+            meta, _ = split_front_matter(text)
+            prof = a.profile or meta.get("profile")
+            if prof:
+                prof = prof if os.path.isabs(prof) or a.profile else os.path.join(os.path.dirname(os.path.abspath(a.file)), prof)
+                ledger = Ledger.load(os.path.join(prof, "evidence.yaml"))
+        issues = bm.check_document(text, ledger, rep, os.path.basename(a.file))
+        for i in issues:
+            print(f"  {i['level'].upper():7} {i['message']}")
+        errs = sum(1 for i in issues if i["level"] == "error")
+        print(f"{errs} errors, {sum(1 for i in issues if i['level'] == 'warning')} warnings"
+              + ("" if ledger is not None else " (no ledger: citations not resolved)"))
+        return 1 if errs else 0
+    if a.action == "design":
+        import yaml
+        target = a.file
+        disc = a.discovery
+        if os.path.isfile(target):          # an existing spec: inventory its profile
+            try:
+                spec = bm.load_spec(target)
+            except ValueError as e:
+                print(f"  ERROR   {e}")
+                return 1
+            base = os.path.dirname(os.path.abspath(target))
+            _, _, prof = bm.context(spec, base)
+            d = spec.get("design", {}) or {}
+            if not disc and d.get("discovery"):
+                disc = d["discovery"] if os.path.isabs(d["discovery"]) else os.path.join(base, d["discovery"])
+            target = prof
+            if not target:
+                print("  ERROR   the spec names no profile (design.profile)")
+                return 1
+        if not os.path.isdir(target):
+            print(f"  ERROR   profile directory not found: {target}")
+            return 1
+        try:
+            md, starter = bm.inventory(target, disc)
+        except ValueError as e:
+            print(f"  ERROR   {e}")
+            return 1
+        out = a.out or os.path.join(os.getcwd(), "business-model")
+        os.makedirs(out, exist_ok=True)
+        p = os.path.join(out, "business-model-inventory.md")
+        with open(p, "w") as f:
+            f.write(md)
+        print(f"wrote {p}")
+        s = os.path.join(out, "business-model.yaml")
+        if os.path.exists(s):
+            print(f"  kept existing {s} (starter spec not overwritten)")
+        else:
+            with open(s, "w") as f:
+                f.write("# Starter business model spec generated from the profile. Items carry the status of their\n"
+                        "# ledger entries; everything else is 'unknown'. Fill in what the founder knows; never invent.\n")
+                f.write(yaml.safe_dump(starter, sort_keys=False, allow_unicode=True))
+            print(f"wrote {s}")
+        return 0
+    try:
+        if a.action == "assumptions" and a.record:
+            added = bm.record(a.file)
+            print(f"ledger: recorded {len(added)} new entr{'y' if len(added) == 1 else 'ies'}"
+                  + (f" ({', '.join(added)})" if added else ""))
+        rep = bm.analyze(a.file, a.model if a.action == "canvas" else None)
+    except ValueError as e:
+        print(f"  ERROR   {e}")
+        return 1
+    stem = os.path.splitext(os.path.basename(a.file))[0]
+    out = a.out or os.path.dirname(os.path.abspath(a.file))
+    os.makedirs(out, exist_ok=True)
+    written = []
+    if a.action == "report":
+        secs = a.sections.split(",") if a.sections else None
+        try:
+            md = bm.report_md(rep, out, secs, segment=a.segment, only_model=a.model)
+        except ValueError as e:
+            print(f"  ERROR   {e}")
+            return 1
+        name = f"{stem}-report.md" if not secs else f"{stem}-{'-'.join(secs)}.md"
+        issues = rep["issues"]
+    elif a.action in BM_SECTION_ACTIONS:
+        if a.segment and a.segment not in {str(s.get("id")) for s in rep["segments"]}:
+            print(f"  ERROR   unknown segment '{a.segment}'")
+            return 1
+        md = bm.report_md(rep, out, BM_SECTION_ACTIONS[a.action], segment=a.segment, only_model=a.model,
+                          title={"canvas": "Business Model Canvas", "value-proposition": "Value Proposition Canvas",
+                                 "compare": "Business model alternatives", "revenue": "Revenue architecture",
+                                 "costs": "Cost structure", "marketplace": "Marketplace model",
+                                 "assumptions": "Assumption register", "stress-test": "Business model stress test"
+                                 }[a.action])
+        name = f"{stem}-{a.action}" + (f"-{a.model.lower()}" if a.model else "") + (
+            f"-{a.segment.lower()}" if a.segment else "") + ".md"
+        issues = [i for i in rep["issues"] if i["area"] in BM_AREAS[a.action] or i["level"] == "error"]
+    else:   # analyze
+        md, name, issues = bm.analysis_md(rep), f"{stem}-analysis.md", rep["issues"]
+    if a.format == "json":
+        js = {k: v for k, v in rep.items() if k != "_spec"}
+        for key in ("revenue", "dependencies", "assumptions"):
+            js[key] = [{k: v for k, v in r.items() if k != "spec"} for r in js[key]]
+        js["alternatives"] = dict(js["alternatives"], alternatives=[
+            {k: v for k, v in x.items() if k != "spec"} for x in js["alternatives"]["alternatives"]])
+        if js.get("marketplace"):
+            js["marketplace"] = {k: v for k, v in js["marketplace"].items() if k != "spec"}
+        p = os.path.join(out, os.path.splitext(name)[0] + ".json")
+        with open(p, "w") as f:
+            json.dump(js, f, indent=2, default=str)
+    else:
+        p = os.path.join(out, name)
+        with open(p, "w") as f:
+            f.write(md)
+        if a.action != "analyze":
+            for i in bm.check_document(md, _bm_ledger(rep), rep, name):
+                if i["level"] == "error":
+                    issues = issues + [{"level": "error", "area": "report", "message": i["message"]}]
+            print(f"  next: startup-kit doc {p} --out {out}")
+    written.append(p)
+    if a.xlsx:
+        written.append(bm.workbook(rep, os.path.join(out, f"{stem}-workbook.xlsx"))["path"])
+    errs = sum(1 for i in issues if i["level"] == "error")
+    print(f"company: {rep['company']} | model: {', '.join(rep['classification']['labels']) or 'not set'} | "
+          f"maturity: {rep['maturity']['level']} | errors: {errs} | "
+          f"warnings: {sum(1 for i in issues if i['level'] == 'warning')}")
+    for i in issues:
+        print(f"  {i['level'].upper():7} {i['area']}: {i['message']}")
+    for w in written:
+        print(f"wrote {w}")
+    return 1 if errs else 0
+
+
 def cmd_themes(a):
     from .theme import AUDIENCE_TO_THEME, available_themes, get_theme
     for t in available_themes():
@@ -454,6 +611,25 @@ def main(argv=None):
     sp.add_argument("--spec", help="check: discovery spec whose notes verify quotations and counts")
     sp.add_argument("--profile", help="check: profile directory whose ledger resolves citations")
     sp.set_defaults(fn=cmd_discovery)
+    sp = sub.add_parser("business-model", help="business model: design | analyze | canvas | value-proposition | "
+                                               "compare | revenue | costs | marketplace | assumptions | "
+                                               "stress-test | report | check")
+    sp.add_argument("action", choices=["design", "analyze", "canvas", "value-proposition", "compare", "revenue",
+                                       "costs", "marketplace", "assumptions", "stress-test", "report", "check"])
+    sp.add_argument("file", help="business model spec YAML (design: a profile directory or spec; check: a Markdown "
+                                 "document)")
+    sp.add_argument("--out")
+    sp.add_argument("--record", action="store_true", help="assumptions: append untested assumptions to the ledger "
+                                                          "(append-only, idempotent)")
+    sp.add_argument("--model", help="canvas: an alternative's own canvas; compare/report: one alternative")
+    sp.add_argument("--segment", help="value-proposition/report: one segment id")
+    sp.add_argument("--format", choices=["md", "json"], default="md")
+    sp.add_argument("--sections", help="report: comma-separated subset, e.g. canvas,revenue,stress")
+    sp.add_argument("--xlsx", action="store_true", help="also write the business model workbook")
+    sp.add_argument("--discovery", help="design: customer discovery spec to read segments and hypotheses from")
+    sp.add_argument("--spec", help="check: business model spec that supplies geography and the ledger")
+    sp.add_argument("--profile", help="check: profile directory whose ledger resolves citations")
+    sp.set_defaults(fn=cmd_business_model)
     sub.add_parser("themes", help="list design themes").set_defaults(fn=cmd_themes)
     a = p.parse_args(argv)
     return a.fn(a) or 0

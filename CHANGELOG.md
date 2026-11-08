@@ -2,6 +2,35 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/). The project uses semantic versioning.
 
+## [1.3.0] — Unreleased
+
+### Added
+- **`business-model-designer`**, the ninth skill: evidence-based business model design. It covers:
+  - a nine-block Business Model Canvas where every item has a basis (evidence, founder-provided, hypothesis, recommendation, unknown), with customer evidence required on customer-facing blocks;
+  - per-segment Value Proposition Canvases with a computed fit ladder;
+  - model classification (SaaS, subscription, freemium, marketplace, transaction, commission, digital products, education, services, consulting, advertising, licensing, usage-based, e-commerce, direct sales, B2B, B2C, B2B2C, hybrid) and the structural requirements of each type;
+  - revenue streams on an evidence-gated ladder (proposed, tested, available, generating, repeatable);
+  - cost structure with fixed, variable, semi-variable and unknown costs kept apart;
+  - marketplace modelling: separate sides, a measured funnel from registrations to repeat transactions, liquidity claims gated on data, GMV vs platform revenue vs seller earnings, payouts, refunds and leakage;
+  - payment, payout, tax, legal and regulatory dependencies with open questions and who must confirm them;
+  - alternatives compared on defined qualitative scales (numeric scores, weights and rankings rejected);
+  - an assumption register on the shared ledger and discovery register;
+  - stress tests with break-even and headroom arithmetic, founder-defined scenarios and thirteen stress cards (no probabilities);
+  - a maturity verdict (coherent, customer evidence, economic viability, repeatable) that a spec cannot overclaim.
+- `startup_kit.business_model` and `startup-kit business-model design | analyze | canvas | value-proposition | compare | revenue | costs | marketplace | assumptions | stress-test | report | check`, with `--record`, `--model`, `--segment`, `--format md|json`, `--sections`, `--xlsx`, `--spec`. It reuses the ledger, the profile, the discovery engine (evidence strength, hypothesis statuses), the GTM metrics and claim guard, the document builder and the workbook conventions.
+- Document guard for business model documents: GMV presented as revenue, registrations as active users, unsupported liquidity or viability claims, payment provider availability asserted for Nepal, in-person cross-border QR used as evidence of online checkout, legal certainty, probabilities, and stated interest presented as payment.
+- `knowledge/business-model/`: 12 files plus an index (Strategyzer, Steve Blank, Eric Ries, HBR, Christensen Institute, NFX, a16z, Bill Gurley, Lenny Rachitsky, Stripe, Nepal Rastra Bank, Fonepay), each source marked read-at-source or url-verified.
+- Ten templates: spec, canvas, value proposition canvas, revenue architecture, cost structure, marketplace model, model comparison, assumption register, stress test and decision summary.
+- Fictional Fieldnote business model example (recommended subscription, viable hybrid, rejected marketplace).
+- 81 tests for the new skill.
+
+### Changed
+- The shared claim guard no longer reads ID codes followed by a noun ("D2 learners", "A3 teachers") as traction counts.
+- Discovery and business model reports compute the front-matter `profile` path from resolved real paths, so documents built in a symlinked folder (such as macOS `/var` → `/private/var`) find their ledger.
+- The `business-model` doc type uses the internal theme.
+- Discovery tests accept additional skills in the collection.
+- Plugin version 1.3.0.
+
 ## [1.2.0] — Unreleased
 
 ### Added

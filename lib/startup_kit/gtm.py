@@ -847,7 +847,7 @@ MARKET_RE = re.compile(r"\b(TAM|SAM|SOM|market size|market is worth|market worth
 NUMBER_RE = re.compile(r"\d")
 TRACTION_RE = re.compile(
     r"(?:\b(?:we|it|the platform|the product|the company|company)\s+(?:has|have|had|now has|serves?|reached|grew|grows)\b"
-    r"[^.\n]{0,40}\d)|(?:\d[\d,.]*\s*(?:k|K|m|M)?\s*(?:paying |active |monthly )?(?:customers|users|creators|learners|"
+    r"[^.\n]{0,40}\d)|(?:(?<![A-Za-z\d-])\d[\d,.]*\s*(?:k|K|m|M)?\s*(?:paying |active |monthly )?(?:customers|users|creators|learners|"
     r"students|subscribers|signups|sign-ups|members|teachers|downloads)\b)|(?:\b(?:revenue|MRR|ARR|GMV|sales)\b[^.\n]{0,25}"
     r"(?:of|is|was|reached|at|=)\s*(?:NPR|Rs\.?|INR|USD|EUR|GBP|[$€£₹])?\s*[^\s]*\d)|(?:\b(?:CAC|LTV|churn|conversion(?: rate)?|retention|payback)\b"
     r"[^.\n]{0,25}(?:of|is|was|at|=|:)\s*(?:NPR|Rs\.?|INR|USD|EUR|GBP|[$€£₹])?\s*[^\s]*\d)", re.I)
