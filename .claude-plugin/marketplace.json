@@ -1,6 +1,6 @@
 {
   "name": "startup-skills",
-  "description": "Startup Skills by Jonas Awasthi: evidence-based startup evaluation, customer discovery, business model design, pitch decks, proposals, research, go-to-market and fundraising.",
+  "description": "Startup Skills by Jonas Awasthi: evidence-based startup evaluation, customer discovery, business model design, pitch decks, proposals, research, go-to-market, fundraising and investor-panel simulation.",
   "owner": {
     "name": "Jonas Awasthi",
     "url": "https://github.com/jonasawasthi"
@@ -9,8 +9,8 @@
     {
       "name": "startup-skills",
       "source": "./",
-      "description": "Nine composable skills plus a tested document engine for founders.",
-      "version": "1.3.0",
+      "description": "Ten composable skills plus a tested document engine for founders.",
+      "version": "1.4.0",
       "license": "MIT",
       "keywords": ["startup", "pitch-deck", "fundraising", "business-plan", "go-to-market", "customer-discovery", "business-model"]
     }

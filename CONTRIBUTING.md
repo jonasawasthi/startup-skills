@@ -19,7 +19,8 @@ python3 scripts/validate_skills.py    # skill spec compliance
 5. **Mechanics belong in code, judgement in Markdown.** Deterministic logic (arithmetic, layout, validation) goes in `lib/startup_kit` with tests.
 6. **Research data is never fabricated.** Examples of interviews, quotes or survey answers must be fictional, labelled as illustrative, and use pseudonymous participant codes. Real research notes stay in `outputs/`.
 7. **Business model examples never assert viability.** Prices, costs and volumes in examples carry an evidence status; payment providers are dependencies, not assumptions; and no example may claim liquidity, revenue or willingness to pay without (fictional, labelled) evidence.
-8. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
+8. **Profiles of real people are sourced, dated and limited.** Investor profiles in `skills/investor-panel-evaluator/investors/` hold public, professional information only, and every fact cites a source that was read. No net worth, quotations, catchphrases, personality descriptions or personal details. Evaluation lenses are labelled as analytical interpretation. Nothing may state or imply that an investor is interested in a company or would invest, and televised deals are never recorded as investments without a source showing they closed. Follow [maintaining investors](skills/investor-panel-evaluator/references/maintaining-investors.md) and run `startup-kit shark-tank profiles`.
+9. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
 
 ## Pull requests
 

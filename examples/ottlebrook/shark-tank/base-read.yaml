@@ -1,0 +1,317 @@
+# FICTIONAL EXAMPLE. Ottlebrook Pty Ltd is not a real company. This base read is built only from the fictional
+# ledger in ../startup-profile/evidence.yaml (20 entries, latest update 2026-11-10). Spec: the skill's
+# references/dimensions.md and references/business-types-and-stages.md. Rebuild with:
+#   bin/startup-kit shark-tank base-read examples/ottlebrook/shark-tank/base-read.yaml \
+#     --profile examples/ottlebrook/startup-profile --out examples/ottlebrook/shark-tank/base-read.md
+startup: "Ottlebrook (fictional example)"   # printed as the title, so it carries the fictional label
+as_of: "2026-11-16"
+ledger_snapshot: "2026-11-10"
+# Primary type hardware (a mains-powered appliance: bill of materials, certification, defects); secondary type
+# consumer-goods (sold through a retailer, so the margin stack and sell-through decide D07 and D09). No ledger entry
+# raises an open licensing question (the certificate and registration are verified, E-015), so the business is not
+# classed as provisionally regulated.
+business_type: ["hardware", "consumer-goods"]
+# Customers have paid (E-008) and sell-through is measured, but there are no annual accounts: early-revenue.
+stage: "early-revenue"
+ambition: growth                     # founder-provided, E-016: a profitable national brand funded mainly from trading
+dimensions:
+  D01:                                # Problem severity
+    rating: adequate
+    confidence: medium
+    critical: true
+    explanation: >-
+      Five of seven interviewed buyers describe a recent week of damp or mouldy laundry, with unheated racks or paid
+      laundromat dryers as the workaround [E-018]. Interview evidence would allow Strong, but the interviewees were
+      recruited from warranty registrations, so they are people who already bought; the sample cannot show how
+      widely the problem is felt, which fits Adequate rather than Strong.
+    evidence:
+      verified: []
+      reported: [E-018]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["How many apartment households lack outdoor drying space and spend on a workaround"]
+    ceiling: strong
+    upgrade_if: "Ten problem interviews with non-buyers in the target segment, most describing a recent costly incident and an existing workaround"
+    downgrade_if: "Non-buyer interviews in which most cannot recall a recent problem with drying laundry"
+    divergence_note: null
+  D02:                                # Market opportunity
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      No market sizing exists in the ledger, top-down or bottom-up. The founders' ambition is growth, not venture
+      scale [E-016], so the size needed is modest, but the decisive question cannot be answered without a count of
+      reachable households and stores.
+    evidence:
+      verified: []
+      reported: [E-016]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["A bottom-up count of reachable retail doors and apartment households, from startup-kit market-size"]
+    ceiling: adequate
+    upgrade_if: "A startup-kit market-size calculation from sourced counts of apartment households and homewares retail doors"
+    downgrade_if: "A sourced count showing the reachable market cannot absorb the volume needed to cover fixed costs"
+    divergence_note: null
+  D03:                                # Customer demand
+    rating: strong
+    confidence: medium
+    critical: true
+    explanation: >-
+      Consumers bought 812 units in 38 stores over 29 weeks, from the retailer's own sell-through export [E-007], and
+      the retailer paid for the first 1,000 units and re-ordered 900 [E-008]. For a durable product sold through a
+      retailer, verified sell-through plus a paid re-order is the repeat-purchase evidence the Strong anchor asks for.
+      Confidence is medium because the warranty return rate of 5% [E-005] and a single retailer limit what the
+      figure shows; website sales of 64 units are founder-provided [E-010].
+    evidence:
+      verified: [E-005, E-007, E-008]
+      reported: [E-010]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Sell-through in a second retailer", "Repeat purchase by consumers (likely low for a durable product)"]
+    ceiling: strong
+    upgrade_if: "Not applicable at Strong; hold the rating with sell-through per store per week from a second retailer"
+    downgrade_if: "Sell-through per store per week falling after the re-order is delivered, or returns rising above 5%"
+    divergence_note: null
+  D04:                                # Competitive landscape
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      The ledger holds no competitor map: no rival products, prices or switching evidence. Interviews name the
+      status quo (unheated racks, laundromat dryers) [E-018] but not the other heated airers a shopper would compare
+      on the same shelf, so the decisive question cannot be answered.
+    evidence:
+      verified: []
+      reported: [E-018]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Which heated airers are ranged beside DR-2 and at what shelf prices"]
+    ceiling: strong
+    upgrade_if: "A sourced competitor table (retailer listings and price tickets, reviews) including unheated racks and dryers"
+    downgrade_if: "Evidence that rival heated airers sell at lower prices with comparable reviews in the same stores"
+    divergence_note: null
+  D05:                                # Product differentiation
+    rating: unknown
+    confidence: low
+    critical: false
+    explanation: >-
+      DR-2 is live and certified [E-015], but nothing in the ledger shows it is better than alternatives on a buying
+      criterion: no comparative test, review data or switching evidence. The 5% heating-element fault rate [E-005]
+      bears on quality but not on how DR-2 compares with rivals.
+    evidence:
+      verified: [E-005, E-015]
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["The buying criterion on which DR-2 beats rival heated airers, with evidence"]
+    ceiling: strong
+    upgrade_if: "A drying-time and running-cost comparison with two rival heated airers, or review ratings against rivals in the same retailer"
+    downgrade_if: "A comparison showing parity or worse on drying time or running cost"
+    divergence_note: null
+  D06:                                # Business model
+    rating: weak
+    confidence: medium
+    critical: false
+    explanation: >-
+      The payer, price and route are verified: Retailer A pays AUD 89.50 per unit [E-003] and has paid an invoice
+      [E-008]. But that price, after the 8% deductions [E-004], is below the cost of delivering a unit (landed cost
+      [E-001, E-002], dispatch [E-006] and warranty [E-005]), which is the Weak anchor (price below cost). The website
+      price leaves an estimated margin before acquisition cost [E-011], but website sales are founder-provided and
+      small [E-010], so they do not change the rating for the business as it trades today.
+    evidence:
+      verified: [E-001, E-002, E-003, E-004, E-005, E-006, E-008]
+      reported: [E-010]
+      estimate: [E-011]
+      assumption: []
+      disputed: []
+      unknowns: ["Whether Retailer A would accept a higher wholesale price"]
+    ceiling: strong
+    upgrade_if: "A signed wholesale price, or a cost per unit, that leaves positive contribution after deductions, dispatch and warranty"
+    downgrade_if: "Further retailer deductions or a price cut at the next range review"
+    divergence_note: null
+  D07:                                # Unit economics
+    rating: weak
+    confidence: high
+    critical: true
+    explanation: >-
+      Contribution per unit sold through Retailer A is negative, AUD -3.36, calculated from verified inputs: wholesale
+      price [E-003], deductions [E-004], landed cost [E-001, E-002], dispatch and returns handling [E-006] and the
+      measured return rate [E-005] [E-009]. It is negative before any overhead, marketing or stock financing. A verified
+      quote at a 3,000-unit order [E-017] would turn it positive if freight per unit holds, and the website contribution
+      is an estimate before an untested acquisition cost [E-011, E-012]; neither describes how the business trades now.
+    evidence:
+      verified: [E-001, E-002, E-003, E-004, E-005, E-006, E-009, E-017]
+      reported: []
+      estimate: [E-011]
+      assumption: [E-012]
+      disputed: []
+      unknowns: ["Freight per unit at a 3,000-unit order", "Website acquisition cost per order"]
+    ceiling: strong
+    upgrade_if: "A signed wholesale price or a delivered 3,000-unit order that gives positive contribution per unit after deductions, dispatch and warranty, recalculated from invoices"
+    downgrade_if: "A higher return rate or higher freight per unit on the next shipment"
+    divergence_note: null
+  D08:                                # Customer acquisition
+    rating: adequate
+    confidence: low
+    critical: true
+    explanation: >-
+      The channel that produced existing customers is known and its cost is verified: Retailer A's stores sold 812
+      units [E-007], and the cost of that channel is the 6% co-operative marketing deduction within the 8% [E-004].
+      Strong needs a repeatable channel whose cost sits inside a payback target; here the cost sits inside a negative
+      contribution [E-009], so there is no payback to measure, and the channel is one retailer. Weak would need a cost
+      shown to exceed a target, and none is set. The website channel has only a planning assumption for acquisition cost [E-012].
+    evidence:
+      verified: [E-004, E-007, E-009]
+      reported: [E-010]
+      estimate: []
+      assumption: [E-012]
+      disputed: []
+      unknowns: ["Acquisition cost per website order from a real campaign"]
+    ceiling: strong
+    upgrade_if: "A second channel with a measured cost per order inside the contribution it earns"
+    downgrade_if: "Retailer A raising the co-operative marketing deduction, or a paid-social test above the website contribution"
+    divergence_note: null
+  D09:                                # Distribution
+    rating: weak
+    confidence: high
+    critical: true
+    explanation: >-
+      The route is secured on paper: a signed supply agreement with one retailer [E-003] and a paid re-order [E-008].
+      But it is a single gatekeeper whose margin and deductions [E-003, E-004] remove the profit per unit [E-009], which
+      is the Weak anchor (a margin stack that removes the profit). The website is a second route only by the
+      founder's account [E-010].
+    evidence:
+      verified: [E-003, E-004, E-008, E-009]
+      reported: [E-010]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Terms another retailer would offer"]
+    ceiling: strong
+    upgrade_if: "A second retail listing, or revised Retailer A terms, under which contribution per unit is positive"
+    downgrade_if: "Retailer A delisting or reducing the range at its next review"
+    divergence_note: null
+  D10:                                # Scalability
+    rating: adequate
+    confidence: low
+    critical: false
+    explanation: >-
+      Unit cost falls with volume on a verified quote, from AUD 61.80 to AUD 52.40 ex-factory at a 3,000-unit order
+      [E-001, E-017], and dispatch is contracted to a warehouse at a fixed rate [E-006]. That identifies the volume lever
+      with a credible plan, which is Adequate; Strong would need margin shown to hold at volume, and the larger order
+      has not been placed.
+    evidence:
+      verified: [E-001, E-006, E-017]
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Freight per unit and storage cost at a 3,000-unit order"]
+    ceiling: strong
+    upgrade_if: "Invoices from a delivered 3,000-unit order showing the quoted cost"
+    downgrade_if: "Freight or storage per unit at the larger order that cancels the ex-factory saving"
+    divergence_note: null
+  D11:                                # Operational complexity (Strong means well controlled)
+    rating: weak
+    confidence: medium
+    critical: true
+    explanation: >-
+      For D11, Weak means the risk is high or uncontrolled. Five per cent of units sold came back with heating-element
+      faults [E-005], an evidenced defect, and the product comes from a single manufacturer with no second source, by
+      the founder's own account against interest [E-020]. Both are named in the Weak anchor. Dispatch is contracted
+      [E-006], which is why confidence is medium rather than high.
+    evidence:
+      verified: [E-005, E-006]
+      reported: [E-020]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Root cause of the heating-element faults and whether the next batch fixes it"]
+    ceiling: strong
+    upgrade_if: "A return rate below 2% on the next shipment from the retailer's returns report, and a second manufacturer quoted and sampled"
+    downgrade_if: "Returns at or above 5% on the second shipment"
+    divergence_note: null
+  D12:                                # Financial sustainability
+    rating: weak
+    confidence: medium
+    critical: true
+    explanation: >-
+      The company reports AUD 96,000 in cash and AUD 14,500 of monthly fixed costs (founder-provided) [E-013, E-014].
+      The verified re-order of 900 units [E-008] needs about AUD 70,200 of stock at the verified landed cost [E-001,
+      E-002] before the retailer pays on 60-day terms [E-003], and each unit sold loses money [E-009]. That is the
+      working-capital trap named in the Weak anchor, shown by verified documents and founder-provided figures that go
+      against the founders' interest.
+    evidence:
+      verified: [E-001, E-002, E-003, E-008, E-009]
+      reported: [E-013, E-014]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Bank statements and a month-by-month cash model"]
+    ceiling: strong
+    upgrade_if: "A startup-kit model from bank statements showing cash stays positive through fulfilment of the re-order on terms that give positive contribution"
+    downgrade_if: "Bank statements showing less cash than reported"
+    divergence_note: null
+  D13:                                # Defensibility
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      No moat is recorded: no registered design, patent, exclusive supply or retailer exclusivity. The decisive question
+      cannot be answered from the ledger.
+    evidence:
+      verified: []
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Any registered design, exclusivity or other moat"]
+    ceiling: unknown
+    upgrade_if: "A registered design or an exclusive term in a supply or retail agreement"
+    downgrade_if: "A rival product with the same design ranged at a lower price"
+    divergence_note: null
+  D14:                                # Founder execution capability
+    rating: adequate
+    confidence: medium
+    critical: true
+    explanation: >-
+      The team has taken a certified product to market [E-015], won a national retail listing [E-003] and a re-order
+      [E-008], and reports relevant prior roles in appliance engineering and homewares account management
+      (founder-provided) [E-019]. Strong needs the critical skill gaps covered; the signed retail terms leave a negative
+      contribution [E-009], which points to an open gap in costing and commercial terms.
+    evidence:
+      verified: [E-003, E-008, E-009, E-015]
+      reported: [E-019]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Who owns costing and pricing decisions"]
+    ceiling: strong
+    upgrade_if: "Renegotiated terms or a costed channel plan delivered on a stated date"
+    downgrade_if: "A further order accepted on terms that leave contribution negative"
+    divergence_note: null
+  D15:                                # Legal and regulatory risks (Strong means well controlled)
+    rating: strong
+    confidence: medium
+    critical: true
+    explanation: >-
+      For D15, Strong means the risk is low or well controlled. DR-2 holds an electrical safety certificate of
+      conformity for Australia, and a compliance consultant's memo confirms that the certification and registration
+      it identifies as required are complete [E-015]. Confidence is medium because the memo is the only source for
+      which requirements apply. Not legal advice; confirm with qualified counsel.
+    evidence:
+      verified: [E-015]
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: []
+    ceiling: strong
+    upgrade_if: "Not applicable at Strong; hold the rating by re-certifying any design change to the heating element"
+    downgrade_if: "A design change to fix the heating-element fault made without re-certification"
+    divergence_note: null

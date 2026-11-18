@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-verify every URL cited in knowledge/ (front matter and inline links).
+"""Re-verify every URL cited in knowledge/ and in the shark-tank investor profiles (front matter and links).
 
 Checks HTTP status *and* page title, because some sites (e.g. the YC Library)
 route by ID prefix and return 200 for a wrong slug, and others (e.g. closed
@@ -15,18 +15,30 @@ import html
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
+import zlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL_RE = re.compile(r"https?://[^\s)>\]\"'`]+")
 UA = "Mozilla/5.0 (compatible; startup-skills-linkcheck/1.0)"
+# investor profiles: their `sources:` are re-verified by title like the knowledge base
+INVESTORS = os.path.join(ROOT, "skills", "investor-panel-evaluator", "investors")
+
+
+def _files():
+    """knowledge/ files, then investor profiles (README.md in the library is not a profile)."""
+    out = glob.glob(os.path.join(ROOT, "knowledge", "**", "*.md"), recursive=True)
+    out += [p for p in sorted(glob.glob(os.path.join(INVESTORS, "*.md")))
+            if os.path.basename(p).lower() != "readme.md"]
+    return out
 
 
 def expected_titles():
-    """url -> expected title, from `sources:` lists in knowledge front matter."""
+    """url -> expected title, from `sources:` lists in knowledge and investor-profile front matter."""
     import yaml
     out = {}
-    for p in glob.glob(os.path.join(ROOT, "knowledge", "**", "*.md"), recursive=True):
+    for p in _files():
         text = open(p, encoding="utf-8").read()
         if not text.startswith("---"):
             continue
@@ -56,7 +68,7 @@ def title_matches(expected, actual, threshold=0.6):
 
 def collect(only_fm):
     urls = {}
-    for p in glob.glob(os.path.join(ROOT, "knowledge", "**", "*.md"), recursive=True):
+    for p in _files():
         text = open(p, encoding="utf-8").read()
         scope = text.split("\n---", 2)[1] if (only_fm and text.startswith("---")) else text
         for u in URL_RE.findall(scope):
@@ -65,17 +77,49 @@ def collect(only_fm):
     return urls
 
 
+META_TITLE_RE = re.compile(r"<meta\b[^>]*>", re.I)
+PDF = "(PDF: status checked, no title to compare)"
+
+
+def page_titles(body):
+    """The page's <title>, then its og:title and twitter:title (many sites share one generic <title> across
+    pages and carry the real headline only in these meta tags)."""
+    out = []
+    m = re.search(r"<title[^>]*>(.*?)</title>", body, re.I | re.S)
+    if m:
+        out.append(html.unescape(m.group(1).strip()))
+    for tag in META_TITLE_RE.findall(body):
+        key = re.search(r"""(?:property|name)\s*=\s*["']((?:og|twitter):title)["']""", tag, re.I)
+        val = re.search(r"""content\s*=\s*(?:"([^"]*)"|'([^']*)')""", tag, re.I | re.S)
+        if key and val:
+            t = html.unescape((val.group(1) if val.group(1) is not None else val.group(2)).strip())
+            if t and t not in out:
+                out.append(t)
+    return out
+
+
+def any_title_matches(expected, titles):
+    return any(title_matches(expected, t) for t in titles) if titles else title_matches(expected, "")
+
+
 def fetch(u, timeout):
+    """(status, <title> or error text, [all candidate titles])"""
     try:
-        req = urllib.request.Request(u, headers={"User-Agent": UA})
+        # non-ASCII paths ("₹6650") are percent-encoded; a PDF has no title, so only its status is checked
+        req = urllib.request.Request(urllib.parse.quote(u, safe=":/?#[]@!$&'()*+,;=%~"), headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            body = r.read(400_000).decode("utf-8", "ignore")
+            if "pdf" in (r.headers.get("Content-Type") or "").lower():
+                return r.status, PDF, [PDF]
+            raw = r.read(400_000)
+            if (r.headers.get("Content-Encoding") or "").lower() == "gzip" or raw[:2] == b"\x1f\x8b":
+                raw = zlib.decompressobj(16 + zlib.MAX_WBITS).decompress(raw)    # sent compressed unasked
+            body = raw.decode("utf-8", "ignore")
             m = re.search(r"<title[^>]*>(.*?)</title>", body, re.I | re.S)
-            return r.status, html.unescape(m.group(1).strip()) if m else ""
+            return r.status, html.unescape(m.group(1).strip()) if m else "", page_titles(body)
     except urllib.error.HTTPError as e:
-        return e.code, ""
+        return e.code, "", []
     except Exception as e:  # network errors
-        return 0, str(e)[:80]
+        return 0, str(e)[:80], []
 
 
 def slug_matches(u, title):
@@ -98,13 +142,15 @@ def main():
     with cf.ThreadPoolExecutor(8) as ex:
         results = dict(zip(urls, ex.map(lambda u: fetch(u, a.timeout), urls)))
     for u in sorted(urls):
-        status, title = results[u]
-        ok = 200 <= status < 400 and slug_matches(u, title) and (u not in titles or title_matches(titles[u], title))
+        status, title, alts = results[u]
+        ok = 200 <= status < 400 and slug_matches(u, title) and (
+            u not in titles or title == PDF or title_matches(titles[u], title) or any_title_matches(titles[u], alts))
         flag = "OK  " if ok else ("BLOCK" if status in (401, 403, 429) else "NET " if status == 0 else "FAIL")
         if flag == "FAIL":
             bad += 1
         print(f"{flag} {status:>3} {u}  — {title[:70]}")
-        if 200 <= status < 400 and u in titles and not title_matches(titles[u], title):
+        if 200 <= status < 400 and u in titles and title != PDF and not (title_matches(titles[u], title)
+                                                         or any_title_matches(titles[u], alts)):
             print(f"        expected title: {titles[u]}")
         if flag != "OK  ":
             print(f"        cited in: {', '.join(sorted(urls[u]))}")

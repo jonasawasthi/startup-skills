@@ -27,7 +27,7 @@ DOC_TYPE_THEME = {"investor-proposal": "venture", "proposal": "venture", "partne
                   "research-report": "venture", "memo": "internal", "fundraising-plan": "venture",
                   "gtm-strategy": "internal", "gtm-plan": "internal", "market-segmentation": "internal",
                   "customer-discovery-report": "internal", "interview-guide": "internal",
-                  "business-model": "internal"}
+                  "business-model": "internal", "shark-tank": "internal"}
 
 
 def _theme(meta: Dict, base: str):

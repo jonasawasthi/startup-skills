@@ -7,6 +7,7 @@ Startup Skills is a collection of Claude Code Agent Skills backed by one small, 
                 │ startup-idea-evaluator  pitch-deck-maker  startup-proposal-generator           │
                 │ business-document-generator  startup-research  fundraising-strategist          │
                 │ gtm-strategy-maker  customer-discovery-validation  business-model-designer     │
+                │ investor-panel-evaluator (+ investors/, its sourced investor profile library)      │
                 └───────────────┬──────────────────────────────┬─────────────────────────────────┘
                      reads      │                              │ runs  bin/startup-kit <command>
                                 ▼                              ▼
@@ -27,6 +28,9 @@ Startup Skills is a collection of Claude Code Agent Skills backed by one small, 
                                                    ├─ business_model.py  canvas with evidence basis, value propositions,
                                                    │                revenue ladder, costs, marketplace funnel, payments,
                                                    │                alternatives, assumptions, stress, maturity, report
+                                                   ├─ shark_tank.py investor profile validation, read-only context,
+                                                   │                base read with evidence ceiling, question queue,
+                                                   │                simulation guards, consent-based ledger recording
                                                    └─ inspect.py    artifact validation + PNG previews
 ```
 
@@ -103,10 +107,22 @@ Narrative files cite ledger IDs inline, for example `Creators keep 90% of revenu
   notes:
 ```
 
+## Investor simulation
+
+`investor-panel-evaluator` is an orchestration layer over the other skills, not a second evaluator. Four mechanisms shape it:
+
+1. **One base read.** The startup is rated once on 15 dimensions, using the same Strong / Adequate / Weak / Unknown scale as `startup-idea-evaluator`. An evidence ceiling caps each rating by the ledger status behind it: Strong needs verified evidence or behavioural evidence from recorded interviews, founder-provided figures and estimates allow Adequate at most, and assumptions alone mean Unknown. Existing evaluator ratings are imported through a documented crosswalk and never silently overridden. There is no aggregate score.
+2. **Lenses.** An investor profile holds sourced facts about a real person's public business record, plus a few evaluation lenses that are labelled as analytical interpretation and derived from those facts. Every point in an investor's evaluation names a lens and ledger evidence, so two investors differ only where their profiles differ. Investors never re-rate the base read.
+3. **Simulation boundary.** Outputs carry a fixed simulation label, use the third person, and must contain no quotations, impersonation, offers or valuations. The engine checks structure and common phrasings; it cannot catch every paraphrase, so a reviewer read of each output is part of the method. A profile's confidence level limits what the simulation may say about that person.
+4. **Five separate judgements.** Good business, investable (for a named investor class), investment-ready, needs further validation, and should not proceed in its current form are answered separately.
+
+The profile library lives inside the skill (`skills/investor-panel-evaluator/investors/`, one file per person), so it survives a single-skill copy. Programme and region are fields, so investors from outside the television programmes fit the same schema, and extra library folders can be passed to the engine. Simulated opinions never enter `evidence.yaml`; only facts the founder states in interrogation mode can, as `reported` entries, and only after the founder agrees.
+
 ## Testing strategy
 
 - **Unit tests** for the ledger, calculators, scanner, Markdown parser and text fitting.
 - **Golden builds** of the bundled example startup (fictional, *Fieldnote*). Each build generates every artifact type and opens it again with an independent reader (python-pptx, python-docx, pypdf, openpyxl plus `formulas`).
 - **Guard tests** check that fabrication is blocked: unsourced charts fail, assumption claims get labels, contradictions surface, and missing inputs produce checklists.
 - **Spec tests** validate every SKILL.md against the Agent Skills rules.
+- **Research tests** validate every investor profile against its schema: sources, panel status, confidence minimums, forbidden fields, quotation marks in paraphrases, and contact-detail patterns. They do not judge fairness; each profile was also checked against its sources by an independent pass.
 - **Visual review** renders PDFs to PNG with `pdftoppm`, so slide and page previews can be inspected.

@@ -1,0 +1,308 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company. This base read is built only from the fictional ledger in
+# ../startup-profile/evidence.yaml (17 entries, latest update 2026-11-08). Nothing was added to the ledger to make
+# the example look fuller: where the ledger is silent, the dimension is Unknown. Spec: the skill's
+# references/dimensions.md. Rebuild with:
+#   bin/startup-kit shark-tank base-read examples/fieldnote/shark-tank/base-read.yaml \
+#     --profile examples/fieldnote/startup-profile --out examples/fieldnote/shark-tank/base-read.md
+startup: "Fieldnote (fictional example)"   # the template asks for a slug; the renderer prints this field as the title, so it carries the fictional label
+as_of: "2026-11-15"
+ledger_snapshot: "2026-11-08"
+business_type: ["saas"]
+stage: "early-revenue"
+# The ledger holds no statement of ambition from the founders. The sibling deck spec targets venture capital, but
+# that is another skill's output, not founder-provided evidence, so ambition stays unknown.
+ambition: unknown
+dimensions:
+  D01:                                # Problem severity
+    rating: adequate
+    confidence: medium
+    critical: true
+    explanation: >-
+      Three of four cooperative-manager interviews describe a recent, specific month-end reconciliation that took
+      days, with spreadsheets and year-end accountants as the workarounds [E-010, E-011, E-013], and a time-and-motion
+      estimate puts the cost at about 11 hours a month per cooperative [E-008]. The interview evidence would allow
+      Strong under the ceiling, but the sample is three incidents in one segment and the fourth manager, who employs
+      an accountant, reports no problem [E-012]. That matches the Adequate anchor (small sample, one segment) rather
+      than Strong; nothing points to Weak.
+    evidence:
+      verified: []
+      reported: [E-010, E-011, E-012, E-013]
+      estimate: [E-008]
+      assumption: []
+      disputed: []
+      unknowns: ["How often payment errors reach members as complaints (experiment X2 has not run)"]
+    ceiling: strong
+    upgrade_if: "Six more manager interviews inside the narrowed segment (200 to 600 members, no in-house accountant), most describing a recent multi-day reconciliation, or complaint logs from five cooperatives showing payment-error complaints in most cycles"
+    downgrade_if: "Further interviews in the segment where managers cannot recall a recent costly reconciliation"
+    divergence_note: null
+  D02:                                # Market opportunity
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      The only market figures are an estimated count of 22,000 registered cooperatives [E-003] multiplied by an
+      assumed software budget, smartphone share and capture rate [E-004, E-005, E-006]. No calculator SAM built from
+      sourced factors exists, and the budget that drives every layer is an assumption, so the decisive question
+      cannot be answered. Ambition is also unrecorded, so "large enough" has no reference point.
+    evidence:
+      verified: []
+      reported: []
+      estimate: [E-003]
+      assumption: [E-004, E-005, E-006]
+      disputed: []
+      unknowns: ["A bottom-up SAM from startup-kit market-size with a tested budget per cooperative", "Why now: no timing change is recorded"]
+    ceiling: adequate
+    upgrade_if: "A market-size calculation whose budget input comes from pre-sales or priced commitments outside the pilot group, plus a sourced timing change"
+    downgrade_if: "A tested budget well below the assumed figure, leaving a serviceable market too small for the stated ambition"
+    divergence_note: null
+  D03:                                # Customer demand
+    rating: adequate
+    confidence: medium
+    critical: true
+    explanation: >-
+      Three of the five paying pilots prepaid the annual plan, confirmed by a paid-invoice export [E-017], and the
+      company reports five cooperatives paying monthly and fourteen using the product weekly (founder-provided)
+      [E-007, E-001]. Verified event data shows 61,200 records captured offline [E-002]. Strong needs verified
+      payments plus retention or repeat purchase, and renewal is not measured yet (churn is a planning assumption,
+      E-009), so the rating stops at Adequate.
+    evidence:
+      verified: [E-002, E-017]
+      reported: [E-001, E-007, E-016]
+      estimate: []
+      assumption: [E-009]
+      disputed: []
+      unknowns: ["Renewal of the first annual cohort", "Whether cooperatives outside the friendly pilot group pay"]
+    ceiling: strong
+    upgrade_if: "Renewals of the first annual cohort, or 90-day retention of paying cooperatives, from billing records"
+    downgrade_if: "Two or more of the first five paying cooperatives cancel or request the 30-day refund"
+    divergence_note: null
+  D04:                                # Competitive landscape
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      Interviews show the status quo: spreadsheets and manual matching in most pilot cooperatives, and an in-house
+      accountant in a larger one [E-010, E-012]. There is no sourced map of other software that cooperatives use or
+      could buy, and no switching evidence, so the decisive question cannot be answered and the rating is Unknown
+      rather than Adequate.
+    evidence:
+      verified: []
+      reported: [E-010, E-012]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Which cooperative or accounting software is sold in the launch country, at what price", "Switching evidence from cooperatives that use another tool"]
+    ceiling: strong
+    upgrade_if: "A sourced competitor table (pricing pages, reviews) that includes spreadsheets and accountants as the status quo"
+    downgrade_if: "A well-priced local tool that already reconciles cooperative payments and is sold through federations"
+    divergence_note: null
+  D05:                                # Product differentiation
+    rating: adequate
+    confidence: low
+    critical: false
+    explanation: >-
+      Offline capture is live and verified by 61,200 records in event data [E-002], and two field agents describe
+      lost and smudged paper slips that it replaces [E-014, E-015]; a survey of active agents is stated preference
+      only [E-016]. The advantage is shown against paper, not against other software, so it does not reach Strong.
+      Confidence is low because no comparison with an alternative tool exists.
+    evidence:
+      verified: [E-002]
+      reported: [E-014, E-015, E-016]
+      estimate: [E-008]
+      assumption: []
+      disputed: []
+      unknowns: ["Head-to-head comparison with any other cooperative software on reconciliation time"]
+    ceiling: strong
+    upgrade_if: "A timed comparison of month-end reconciliation with Fieldnote and with the cooperative's previous method, at three or more sites"
+    downgrade_if: "Evidence that a competing tool already offers offline capture with automatic reconciliation"
+    divergence_note: null
+  D06:                                # Business model
+    rating: strong
+    confidence: medium
+    critical: false
+    explanation: >-
+      The decisive question, who pays how much for what, is answered by verified payment: three cooperatives paid
+      the USD 400 annual plan, per the paid-invoice export [E-017]. The company also reports five cooperatives paying
+      USD 40 a month (founder-provided) [E-007]. The payer is the manager who carries the reconciliation work, so
+      payer and value are aligned. Confidence is medium because the payers are friendly pilots and the plan has a
+      refund window.
+    evidence:
+      verified: [E-017]
+      reported: [E-007]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Whether a cooperative outside the pilot group pays the same price"]
+    ceiling: strong
+    upgrade_if: "Not applicable at Strong; hold the rating with payments at the same price from cooperatives outside the pilot group"
+    downgrade_if: "Refund requests within the 30-day window, or new cooperatives refusing the price"
+    divergence_note: null
+  D07:                                # Unit economics
+    rating: unknown
+    confidence: medium
+    critical: true
+    explanation: >-
+      Price is known [E-017, E-007], but the ledger holds no variable cost per cooperative (support, onboarding,
+      hosting per customer) and no measured acquisition cost, and churn is an assumption [E-009]. The contribution
+      calculation cannot run on non-assumption inputs, which is this dimension's Unknown trigger.
+    evidence:
+      verified: [E-017]
+      reported: [E-007]
+      estimate: []
+      assumption: [E-009]
+      disputed: []
+      unknowns: ["Support and onboarding cost per cooperative per month", "Acquisition cost per paying cooperative", "Measured churn"]
+    ceiling: strong
+    upgrade_if: "Eight weeks of logged support hours per cooperative and the cost of the last five onboardings, run through startup-kit unit-economics with measured churn"
+    downgrade_if: "Logged support and onboarding cost per cooperative that exceeds the monthly price"
+    divergence_note: null
+  D08:                                # Customer acquisition
+    rating: unknown
+    confidence: medium
+    critical: true
+    explanation: >-
+      The ledger records how many cooperatives use and pay [E-001, E-007] but not which channel produced them or at
+      what cost. With no channel, cost or conversion figure, the rating is Unknown.
+    evidence:
+      verified: []
+      reported: [E-001, E-007]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Channel that produced the fourteen pilots and the five paying cooperatives", "Cost per paying cooperative"]
+    ceiling: adequate
+    upgrade_if: "Attribution of each paying cooperative to a channel, with the travel and time cost of each"
+    downgrade_if: "Measured acquisition cost above the first-year revenue of a cooperative"
+    divergence_note: null
+  D09:                                # Distribution
+    rating: unknown
+    confidence: low
+    critical: false
+    explanation: >-
+      The ledger identifies no route to customers beyond the fact that pilots exist, and nothing on platform
+      dependence or the sales motion. The decisive question cannot be answered.
+    evidence:
+      verified: []
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Route to cooperatives outside the pilot region (direct visits, federations, other)", "Dependence on any app store or device platform"]
+    ceiling: unknown
+    upgrade_if: "A signed introduction or referral arrangement with a cooperative federation, or a documented direct-sales route with its capacity"
+    downgrade_if: "Evidence that cooperatives buy software only through one gatekeeper that charges a margin the price cannot carry"
+    divergence_note: null
+  D10:                                # Scalability
+    rating: unknown
+    confidence: low
+    critical: false
+    explanation: >-
+      Verified event data shows the software already handles 61,200 records [E-002], but that speaks to data volume,
+      not to what breaks at ten times the number of cooperatives. Onboarding effort, support load and staffing above
+      current volume are not in the ledger.
+    evidence:
+      verified: [E-002]
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Founder hours per onboarding", "Support hours per cooperative as volume grows"]
+    ceiling: strong
+    upgrade_if: "Timed onboardings and logged support hours showing cost per cooperative falling as cooperatives are added"
+    downgrade_if: "Onboarding or support that needs founder time in proportion to the number of cooperatives"
+    divergence_note: null
+  D11:                                # Operational complexity (Strong means well controlled)
+    rating: unknown
+    confidence: low
+    critical: false
+    explanation: >-
+      Weekly operations (onboarding, support, sync failures, data correction) are not described in the ledger. For
+      D11, Strong would mean operations are well controlled; with no evidence either way the rating is Unknown.
+    evidence:
+      verified: []
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Support tickets and sync incidents per cooperative per month", "Who covers support when a founder is away"]
+    ceiling: unknown
+    upgrade_if: "Two months of support and incident logs at current volume"
+    downgrade_if: "Logged sync failures or support backlogs at current volume"
+    divergence_note: null
+  D12:                                # Financial sustainability
+    rating: unknown
+    confidence: medium
+    critical: true
+    explanation: >-
+      The ledger holds no cash balance, burn rate or runway. The decisive question, months of runway against the next
+      milestone, cannot be answered.
+    evidence:
+      verified: []
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Cash in the bank and monthly burn", "Next milestone and its date"]
+    ceiling: unknown
+    upgrade_if: "Bank statements and a startup-kit model run showing runway to the next milestone"
+    downgrade_if: "Runway shorter than the time needed to measure renewals of the first annual cohort"
+    divergence_note: null
+  D13:                                # Defensibility
+    rating: unknown
+    confidence: medium
+    critical: false
+    explanation: >-
+      No moat is recorded in the ledger: no exclusive contract, no measured switching cost, no data or network effect
+      with metrics. Accumulated delivery records [E-002] could become a switching cost, but no evidence shows that
+      cooperatives would find leaving costly.
+    evidence:
+      verified: [E-002]
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Evidence that stored records make switching costly for a cooperative"]
+    ceiling: strong
+    upgrade_if: "A named moat with evidence, for example an exclusive federation agreement or measured retention linked to stored history"
+    downgrade_if: "A competitor importing cooperative records from Fieldnote without friction"
+    divergence_note: null
+  D14:                                # Founder execution capability
+    rating: adequate
+    confidence: medium
+    critical: true
+    explanation: >-
+      The team has shipped a live offline product that has captured 61,200 records [E-002] and has sold annual plans
+      that were paid [E-017]; it also reports fourteen weekly-active pilots (founder-provided) [E-001]. That is
+      verified shipping and selling, but the ledger holds nothing on team roles or on whether critical skills
+      (support at scale, finance) are covered, which Strong requires.
+    evidence:
+      verified: [E-002, E-017]
+      reported: [E-001]
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Team composition and roles", "Milestones met against plan"]
+    ceiling: strong
+    upgrade_if: "A dated record of milestones met against the plan, and named owners for support and finance"
+    downgrade_if: "Missed milestones on the renewal and support-measurement plan"
+    divergence_note: null
+  D15:                                # Legal and regulatory risks (Strong means well controlled)
+    rating: unknown
+    confidence: low
+    critical: false
+    explanation: >-
+      The ledger records no research on the rules that apply to holding member payment and delivery data, or on
+      company registration. No ledger entry raises an open licensing question, so the business is not classed as
+      provisionally regulated. For D15, Strong would mean the risk is well controlled; with no
+      research the rating is Unknown. Not legal advice; confirm with qualified counsel.
+    evidence:
+      verified: []
+      reported: []
+      estimate: []
+      assumption: []
+      disputed: []
+      unknowns: ["Data-protection obligations for member payment and delivery records in the launch country"]
+    ceiling: unknown
+    upgrade_if: "A sourced summary of the data-protection and payment rules in the launch country, with a plan, cost and timeline"
+    downgrade_if: "A required consent or licence that the current product does not meet, with no clear path"
+    divergence_note: null

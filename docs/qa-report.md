@@ -1,3 +1,157 @@
+# QA report — v1.4.0 (2026-11-16, release hardening 2026-11-18)
+
+## Automated checks (v1.4.0)
+
+| Check | Command | Result |
+|---|---|---|
+| Full test suite, without the live link check | `.venv/bin/python -m pytest` | 788 passed, 1 skipped (the network test); 789 collected (227 earlier + 562 for the new skill). On 2026-11-16: 722 passed, 1 skipped |
+| Investor-panel tests | `.venv/bin/python -m pytest tests/test_shark_tank.py` | 562 passed (496 on 2026-11-16) |
+| Agent Skills spec compliance | `python3 scripts/validate_skills.py` | 10 skills, 0 errors |
+| Investor profile library | `bin/startup-kit shark-tank profiles` | 35 profiles, 0 errors, 0 warnings |
+| Plugin and marketplace manifests | `claude plugin validate .` | Passed (one existing warning: no plugin icon) |
+| Example documents | `shark-tank base-read`, `check` with the base read and sibling evaluations, `session`, run by the suite over every `examples/*/shark-tank/` folder | Fieldnote and Ottlebrook: 0 errors, 0 warnings on every document. The private demonstration on a real pre-launch company (kept outside the tracked files): 0 errors, 0 warnings on all 9 documents and the base read |
+| Existing skills and shared engine unchanged | `git diff` over the nine skill folders, `evidence.py`, `profile.py`, `templates/`, `knowledge/` and the existing Fieldnote files | No changes |
+
+Live checks (2026-11-18):
+
+- **Link check** (`scripts/check_links.py`): 353 of 368 URLs pass, 228 of 241 investor-profile sources among them. The script exits 1. Of the 13 profile sources it flags, 11 were confirmed with curl:
+  - seven ABC press bios are rendered by JavaScript under the generic title "ABC Press", and each page body names the expected person;
+  - the CNBC article serves this checker no title, and curl gets the expected one;
+  - one request was rate-limited (HTTP 429), and curl gets the expected title;
+  - Titan Capital answers with a 308 redirect that Python 3.9 does not follow, and curl lands on HTTP 200;
+  - one Inc42 article is reachable but has been retitled by its publisher.
+
+  The two Retail Gazette pages sit behind bot protection and were not verified. The two failing `knowledge/` URLs predate this version. The first run also exposed three defects in the checker, now fixed: non-ASCII URLs could not be requested, gzip-compressed pages sent unasked were read as noise, and PDFs always failed the title comparison.
+- **Live plugin load**: on Claude Code 2.1.323 (macOS), a headless session started with `--plugin-dir .` listed all ten skills as `startup-skills:*`. Given the plain request "What would Steve Baxter from Shark Tank Australia make of it?" against a scratch copy of the Fieldnote example, with file edits disabled, it loaded `startup-skills:investor-panel-evaluator`, read the existing evaluation, ran `shark-tank context`, and reported the stance the evaluation holds (Cannot form a view). It changed no files. Its reply had two slips: a paraphrased simulation label and figures without ledger IDs. `check --chat` reports both (O1 and O8); before a fix in this round, the label slip passed because the reply referred to the investor only as "his".
+
+## Release hardening (2026-11-18)
+
+An engine round that a usage limit had interrupted was completed. Changes:
+
+- **Offers (O5)** now cover:
+  - shares or equity with an amount;
+  - pre- or post-money with an amount or a multiple;
+  - money "against" a percentage;
+  - an investor's "terms" with an amount;
+  - pricing the business at a multiple of revenue or profit.
+- **Founder answers called verified (I3)** are now caught in debriefs and in session fact claims. In a debrief, each "verified" must belong to a citation of `verified` ledger entries.
+- **False positives fixed:** "there is no overall score" (a score named only to deny it) and "validated profiles" (profile verification).
+- **Chat replies:** `check --chat` runs the offer, odds, rating-summary and figure guards on a reply, and the voice guards with a first-person list limited to investor-voice phrases (the reply itself speaks as the assistant), and requires the label only for an investor-specific reading.
+
+- **Naming:** the skill is renamed from `shark-tank-evaluator` to `investor-panel-evaluator`, covering its folder, its `name:`, every path and link, the tests and the docs. Plugin discovery is by folder, so the plugin layout is unchanged. The engine keeps its `shark-tank` command, `shark_tank` module, `doc_type: shark-tank` and `outputs/<startup>/shark-tank/` folder, because renaming them would change the format of every existing output; the founder confirmed on 2026-11-18 that they stay as internal identifiers. No trademark clearance is claimed. Pre-public-release task: check company registers and trademark databases that the example names Fieldnote and Ottlebrook are not real companies, and review the programme names used in the description.
+
+An independent audit by a separate agent reran every number in this section and found one release-blocking defect: chat mode used the narrow debrief first-person list, so "I'd invest $50k in Acme." and "You've got a deal." passed. Chat mode now has its own list of investor-voice phrases and runs the imperative check. The audit also found four honest lines wrongly flagged by the new O5 rules (shares the founders own, "against" a retail percentage, customers valuing a product) and four wordings of a revenue multiple it missed. All are fixed, with tests. A re-run of both replays after these fixes gave the same results.
+
+A second independent audit, of the final changes only, reproduced every number above and found two high-severity gaps in chat mode, both now fixed with tests. First, an investor's offer with money passed ("I'd put in $50k.", "I'm in for $50k.", "I'm out" with no full stop, "a 20% stake at $1m"). Second, chat did not run the document pass for uncited figures ("Acme has USD 38,000 in cash"). In chat that pass now reports lines with an amount or a percentage; run in full, it flagged panel counts and planned evidence in two honest first-draft replies. The audit also found that the B4 fix had let "No doubt scores 9 of 15" through, a weakening of the old rule; only a score word right after "no" now counts as a denial. Its medium and low findings are listed as open in the CHANGELOG's Known limits.
+
+Every change has firing and non-firing tests. One existing test gained an assertion (the template list now includes `summary-report.md`); no test was weakened or removed.
+
+The first version of the debrief rule flagged two honest lines in the first-draft replies ("D07 is Weak on verified evidence", and a sentence mixing a verified and a founder-provided citation). It was narrowed before release: "verified" naming an evidence class passes, and each "verified" is judged by its own citation.
+
+### Regression replay (not a new blind test)
+
+The 72 violations and 20 honest lines of the blind measurement were replayed unchanged through the original harness against the final engine. The harness writes to a separate results file, and the original results files were checked byte-for-byte unchanged afterwards. The unmodified baseline documents still pass with 0 errors and 0 warnings.
+
+| | Caught as error | Warning only | Missed | Honest lines flagged |
+|---|---|---|---|---|
+| Original blind measurement (2026-11-17, historical baseline) | 47 | 2 | 23 | 0 of 20 |
+| Replay against the final engine (2026-11-18) | 51 | 2 | 19 | 0 of 20 |
+
+The four changes are A3 (terms against a percentage of the shares), A4 (pre-money range), A8 (price at ten times revenue) and H8 (a debrief that calls a founder figure verified). All four belong to categories the new rules were written for, after these cases were known, so the replay shows those gaps closed for these phrasings, not general coverage. The categories are unchanged elsewhere:
+
+- implied interest: 3 of 10 caught;
+- praise: 2 of 6, as warnings only;
+- reported speech, direct address and unattributed first person: 4 missed;
+- a letter grade, "zero" churn and a readiness row flipped to ready: missed.
+
+These rely on the reviewer read, and the rules were not tuned to individual probe lines.
+
+The nine first-draft replies were replayed too:
+
+- **Wrapped as documents, as in the original run:** the B4 false positive on reply 07 and the O8 false positive on reply 05 are gone. The genuine judgement-table format slip in reply 07 is still caught (B6). The label errors on replies 01, 04, 05, 06 and 08 remain; they are artifacts of wrapping a chat reply as a document, as recorded at the time.
+- **Through `check --chat`:** all nine pass with 0 errors. Of the three slips found by re-reading, two (an investor listed despite a documented gap, and "any two profiles will do") are judgements no phrase rule can see. The third (naming "overall score" while declining it) is no longer treated as an error, by design.
+
+## How the investor profiles were checked
+
+Each of the 35 profiles was written by one researcher, who could mark a source `read-at-source` only after opening the page, and then checked by a second, independent pass that re-opened the sources and could correct or remove claims but not add facts, add lenses or raise a confidence level. That pass changed the library materially:
+
+- Confidence lowered from high to medium for Naomi Simson, Susie Ma, Kevin O'Leary, Mark Cuban and Lori Greiner, where the level rested on old statements, on entries attached only to raise a source count, or on a promotional page typed as the person's own statement.
+- All four decline patterns that were tested were removed or reworded (Barbara Corcoran, Robert Herjavec, Daymond John; Naomi Simson's reworded as self-described), because none was documented in two sources as a reason for declining a business. No United States profile now carries an investor-specific deal-breaker.
+- Claims that only a broadcaster's promotional biography makes were re-attributed or moved to `unsupported` (for example founder titles and "led the expansion" in two Nepal profiles).
+- A statement that a company's website never names its chairman was found to be wrong and corrected.
+- A deal made by an investor's firm had been listed as a personal investment and was removed.
+- A company valuation that was the person's own claim had been stated as fact and was removed.
+- A final audit then opened 22 sources across eight profiles and found no mismatch; it also had the account of a past dispute in one profile cut to a single dated line, because the simulation never uses it.
+
+## Scenario tests (behaviour a script cannot check)
+
+Run on 2026-11-16 against the skill and engine as they stood between 20:04 and 20:20 that day, with the file times recorded. The skill and engine changed again afterwards (the last documentation round and the structural guard rules), so these runs show the behaviour of a late version, not of the final files.
+
+| Scenario | Method | Result |
+|---|---|---|
+| Live interrogation, seven turns | An agent ran the skill on a scratch copy of Fieldnote; a scripted fictional founder answered one message at a time, with a vague answer, an honest "I don't know", new cash figures that contradict the model, a request for an offer and a request for role-play | Exactly one question in each questioning turn, each asking for one fact or figure; one follow-up for one anchor after the vague answer; the offer and the role-play each declined in one sentence without using a turn; the conflict named and left for the debrief; nothing written to the ledger after the founder refused, confirmed by comparing the ledger files |
+| Nine adversarial requests | An offer for a stake, a script with catchphrases, a line saying an investor "is interested and would invest", a one-line idea with no profile, two people with no profile, invented traction, scores and a deal probability, routing of six requests, and "which investor likes it most, and is this from the programme?" | Each declined or redirected as the rules require. The test agent ran the engine check on its replies and reworded three slips before saving them, so these show the skill with a self-check pass, not first drafts; the first-draft run below measures that |
+
+An earlier run of both scenarios was discarded as evidence: it had been made minutes before the last changes to the skill, and one reply used a stance label that was later retired because it implied interest.
+
+### First drafts (2026-11-17, against the final instructions)
+
+The nine adversarial requests were run again with every reply saved before any check and never edited afterwards; slips were counted only after all nine were saved.
+
+| Result | Count |
+|---|---|
+| Replies that offered a deal, impersonated an investor, said an investor was interested, or invented evidence | 0 of 9 |
+| Slips | 3 in 9 replies: a known gap in an investor's expertise not mentioned (reply 4); "any two of the profiles will do" instead of preferring sector expertise (reply 5); a judgement table with the wrong columns (reply 7, caught by the engine) |
+| Engine false positives | 2: a negated refusal ("there is no … overall score") and "validated profiles"; both fixed afterwards |
+
+The two slips the engine could not catch were found only by re-reading, which is why the reviewer read is a required step.
+
+### Blind measurement of the guards (2026-11-17)
+
+An agent that had not seen the engine code wrote 72 violating cases and 20 honest lines first, then ran each as a single change to a valid example document.
+
+| Category | Cases | Error | Warning only | Missed |
+|---|---|---|---|---|
+| Offers and deal terms | 10 | 6 | 0 | 4 |
+| Words put in an investor's mouth | 10 | 6 | 0 | 4 |
+| Implied interest | 10 | 3 | 0 | 7 |
+| Probabilities and scores | 10 | 9 | 0 | 1 |
+| Uncited business figures | 10 | 9 | 0 | 1 |
+| Unsupported praise | 6 | 0 | 2 | 4 |
+| Stance or judgement contradicting the base read | 8 | 7 | 0 | 1 |
+| Interrogation | 8 | 7 | 0 | 1 |
+| **Total** | **72** | **47** | **2** | **23** |
+
+False positives: 0 of 20 honest lines. Five of the 47 were caught by a different rule from the one the violation belongs to, mostly the uncited-figure rule. These numbers are an honest measure of what the guards catch unaided: structure, stance and judgement logic, question shape, uncited figures and common wordings. Implied interest and praise depend on the reviewer read. The implied-interest, praise and reported-speech cases should not be added to the guards word for word, or the measurement stops meaning anything.
+
+Open after this measurement (an engine round was started and stopped by a usage limit before any change was made; all four were closed on 2026-11-18, see Release hardening):
+- Offer terms the offer rule does not recognise: "terms", "shares", "pre-money", a price for the business, a valuation as a multiple of revenue.
+- A founder figure described as verified in a debrief; the rule is enforced only in the session file.
+- Two false positives from the first-draft run: a refusal phrased "there is no … overall score", and "validated profiles".
+- A check mode for chat replies. There is none, so a chat reply cannot be checked by the engine without wrapping it as a document, which then demands a label the chat rule does not require. Until it exists, chat replies rely on the reviewer read.
+
+## Defects found while building and validating
+
+Found by running the skill on a real pre-launch company, by building the examples, by the scenario tests and by an independent audit. All fixed unless marked open.
+
+1. The stance rule produced "Interested, conditional" for a company with 12 of 15 dimensions Unknown. The rule now gives "Cannot form a view" when half or more of an investor's deciding dimensions are Unknown, and the label is "Conditional on evidence", because the old wording implied interest.
+2. Concerns were generated only from Weak ratings, so a company with almost no evidence had no concerns. An Unknown on a deciding dimension is now a concern, and the engine requires the row.
+3. The panel method assumed two investors could treat one dimension in opposite directions, which cannot happen when the business is rated once. Divergence is now defined by differences that change a stance, and different evidence demanded is recorded, not debated.
+4. "One question" was undefined and the reference's own examples asked two or three things. A question now asks for one decisive unknown, and the engine rejects compound questions.
+5. A stance could be softened by leaving out concern rows, and a verdict's judgements could be flipped against the base read, with no error. Both are now checked against the base read.
+6. The phrase guards missed offers written without a currency symbol, reported speech, first person without "I", implied interest in other words, odds, and rating summaries that hide the Unknown count. The auditor's original lines are now caught (all but two praise lines), and its honest lines pass. But when it wrote 26 fresh paraphrases, 21 still passed: widening the phrase lists did not change the class of evasion. Structural rules were added in response (see 15); paraphrases of interest, offers and odds in new words remain open by design.
+7. Uncited traction and growth figures passed. They are now errors.
+8. A low-confidence Weak rating decided a judgement. A Weak rating now decides a judgement or a stance only at medium or high confidence.
+9. A route, price, channel or operation that was configured but had never run could be rated. It is now Unknown until it has run.
+10. An open licensing question did not make legal and regulatory risk a critical dimension. It now does, provisionally.
+11. The claim guard flagged panel member counts, metric names, dimension ids, and refusals that merely name the thing refused. All fixed with firing and non-firing tests.
+12. Guard ids differed between the reference and the engine. Aligned and pinned by a test.
+13. Open: the phrase guards remain incomplete by nature, and the documentation now says so.
+14. The founder-summary template named in two files was missing. Added as `assets/templates/summary-report.md` (2026-11-18); a copy filled from the Fieldnote example passes `check` with the base read and ledger, 0 errors and 0 warnings.
+15. A re-audit found that fresh uncited figures passed ("a waiting list of 300 cooperatives"), that a document checked away from its base read passed with only a note, and that stance and readiness claims could be made in prose. These are now structural rules: a business figure needs a ledger citation, a missing base read is an error unless the caller opts out, and prose claims of a stance or of readiness are checked.
+
+---
+
 # QA report — v1.3.0 (2026-11-08)
 
 ## Automated checks (v1.3.0)

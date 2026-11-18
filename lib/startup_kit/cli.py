@@ -524,6 +524,175 @@ def cmd_business_model(a):
     return 1 if errs else 0
 
 
+def _st_print(issues):
+    for i in issues:
+        print(f"  {i['level'].upper():7} {i['rule']}: {i['message']}")
+    errs = sum(1 for i in issues if i["level"] == "error")
+    print(f"{errs} errors, {sum(1 for i in issues if i['level'] == 'warning')} warnings")
+    return errs
+
+
+def cmd_shark_tank(a):
+    from . import shark_tank as st
+    from .evidence import Ledger
+
+    def library():
+        profs, issues = st.load_library(a.library, a.today, include_default=not a.no_shipped)
+        return profs, issues
+
+    def need(what):
+        if not a.target:
+            print(f"  ERROR   shark-tank {a.action} needs {what}")
+            return False
+        return True
+
+    try:
+        if a.action == "profiles":
+            profs, lib_issues = library()
+            if a.id:
+                p = profs.get(a.id)
+                if not p:
+                    print(f"  ERROR   no profile '{a.id}' in the libraries")
+                    return 1
+                if a.json:
+                    print(json.dumps({**p.summary(), "lenses": p.lenses, "emphasis": p.emphasis,
+                                      "issues": p.issues}, indent=2, default=str))
+                    return 1 if p.errors else 0
+                s = p.summary()
+                print(f"{p.name} ({p.id}) · confidence declared {s['declared']}, effective {s['effective']}")
+                for lid, ln in p.lenses.items():
+                    print(f"  {lid} {ln.get('label')}: dimensions {', '.join(str(d) for d in ln.get('dimensions') or [])}"
+                          f"{' · decline pattern' if ln.get('decline_pattern') else ''}")
+                for tier in ("primary", "secondary"):
+                    print(f"  {tier}: " + (", ".join(f"{d} {l}" for d, l in p.emphasis[tier].items()) or "none"))
+                return 1 if _st_print(p.issues) else 0
+            rows = [p.summary() for p in profs.values()]
+            issues = lib_issues + [i for p in profs.values() for i in p.issues]
+            if a.json:
+                print(json.dumps({"profiles": rows, "issues": issues}, indent=2, default=str))
+                return 1 if any(i["level"] == "error" for i in issues) else 0
+            print(f"{'id':22} {'name':24} {'regions':8} {'declared':8} {'effective':9} src lenses  programmes (status, as of)")
+            for r in rows:
+                print(f"{r['id']:22} {r['name'][:24]:24} {','.join(r['regions']):8} {r['declared']:8} "
+                      f"{str(r['effective']):9} {r['sources']:3} {r['lenses']:<6} {'; '.join(r['programmes'])}")
+            print(f"{len(rows)} profiles")
+            return 1 if _st_print(issues) else 0
+        if a.action == "context":
+            if not need("a profile directory"):
+                return 1
+            ctx = st.context(a.target)
+            print(json.dumps(ctx, indent=2, default=str) if a.json else st.context_md(ctx))
+            return 0
+        if a.action == "base-read":
+            if not need("a base-read YAML file") or not a.profile:
+                print("  ERROR   base-read needs FILE and --profile PROFILE_DIR")
+                return 1
+            data = st.load_yaml(a.target)
+            ledger = Ledger.load(os.path.join(a.profile, "evidence.yaml"))
+            issues = st.validate_base_read(data, ledger, a.today)
+            if isinstance(data, dict) and isinstance(data.get("dimensions"), dict):
+                print(st.evidence_profile_line(data["dimensions"]))
+            if a.out and not any(i["level"] == "error" for i in issues):
+                rel = os.path.relpath(os.path.abspath(a.profile), os.path.dirname(os.path.abspath(a.out)))
+                md = st.render_base_read(data, ledger, rel)
+                os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+                with open(a.out, "w", encoding="utf-8") as f:
+                    f.write(md)
+                profs, _ = library()
+                # every guard result on the rendered Markdown, warnings included, as `check` would report them
+                issues += st.check_document(md, ledger, profs, where=os.path.basename(a.out), base=data)
+                print(f"wrote {a.out}")
+            elif a.out:
+                print("  not written: fix the errors first")
+            return 1 if _st_print(issues) else 0
+        if a.action == "queue":
+            if not need("a base-read YAML file"):
+                return 1
+            profs, _ = library()
+            ids = [i.strip() for i in (a.investors or "").split(",") if i.strip()]
+            chosen, bad = [], []
+            for i in ids:
+                p = profs.get(i)
+                if not p or not p.ok:
+                    bad.append(i)
+                else:
+                    chosen.append(p)
+            if bad:
+                print(f"  ERROR   unknown or invalid investor profiles: {', '.join(bad)}")
+                return 1
+            if a.budget < 1:
+                print("  ERROR   --budget must be at least 1")
+                return 1
+            ledger = Ledger.load(os.path.join(a.profile, "evidence.yaml")) if a.profile else None
+            rows = st.queue(st.load_yaml(a.target) or {}, chosen, a.budget, ledger)
+            if ledger is None:
+                note = ("NOTE    no --profile: the ledger was not read, so tier 3 rests on the base read's buckets "
+                        "alone (a critical Adequate with no verified entry). Pass --profile PROFILE_DIR so that "
+                        "interview-reported evidence keeps a dimension out of tier 3.")
+                print(note, file=sys.stderr if a.json else sys.stdout)
+            if a.json:
+                print(json.dumps(rows, indent=2))
+                return 0
+            print("tier  dim  rating    investor              lens  decisive question")
+            for r in rows:
+                print(f"{r['tier']:<5} {r['dimension']}  {r['rating']:9} {r['investor'][:21]:21} {r['lens']:5} "
+                      f"{r['decisive_question']}")
+            return 0
+        if a.action == "check":
+            if not need("a Markdown document"):
+                return 1
+            from .docs.markdown import split_front_matter
+            with open(a.target, encoding="utf-8") as f:
+                text = f.read()
+            ledger = None
+            if a.profile:
+                ledger = Ledger.load(os.path.join(a.profile, "evidence.yaml"))
+            else:
+                try:
+                    meta, _ = split_front_matter(text)
+                except Exception:
+                    meta = {}
+                ev = meta.get("evidence") or (os.path.join(meta["profile"], "evidence.yaml")
+                                              if meta.get("profile") else None)
+                if ev:
+                    ledger = Ledger.load(ev if os.path.isabs(ev) else
+                                         os.path.join(os.path.dirname(os.path.abspath(a.target)), ev))
+            profs, _ = library()
+            if a.chat:          # a chat reply: voice, offer and figure guards; the label only for a reading
+                return 1 if _st_print(st.check_chat(text, ledger, profs, os.path.basename(a.target))) else 0
+            against = [(os.path.basename(p), open(p, encoding="utf-8").read()) for p in (a.against or [])]
+            br = a.base_read or os.path.join(os.path.dirname(os.path.abspath(a.target)), "base-read.yaml")
+            base = st.load_yaml(br) if os.path.isfile(br) else None
+            if a.base_read and base is None:
+                print(f"  ERROR   base read not found: {a.base_read}")
+                return 1
+            issues = st.check_document(text, ledger, profs, against, os.path.basename(a.target),
+                                       base if isinstance(base, dict) else None,
+                                       allow_no_base=a.no_base_read, allow_no_ledger=a.no_ledger)
+            return 1 if _st_print(issues) else 0
+        if a.action == "session":
+            if not need("a session YAML file"):
+                return 1
+            profs, _ = library()
+            if a.target.lower().endswith((".md", ".markdown")):      # a saved queue document with question wording
+                with open(a.target, encoding="utf-8") as f:
+                    return 1 if _st_print(st.check_queue_document(f.read(), profs, os.path.basename(a.target))) else 0
+            return 1 if _st_print(st.validate_session(st.load_yaml(a.target), profs)) else 0
+        if a.action == "record":
+            if not need("a session YAML file") or not a.profile:
+                print("  ERROR   record needs SESSION.yaml and --profile PROFILE_DIR")
+                return 1
+            profs, _ = library()
+            added = st.record(a.target, a.profile, a.confirmed, a.today, profs)
+            print(f"ledger: recorded {len(added)} new founder-provided entr{'y' if len(added) == 1 else 'ies'}"
+                  + (f" ({', '.join(added)})" if added else " (nothing new)"))
+            return 0
+    except (ValueError, OSError) as e:
+        print(f"  ERROR   {e}")
+        return 1
+    return 0
+
+
 def cmd_themes(a):
     from .theme import AUDIENCE_TO_THEME, available_themes, get_theme
     for t in available_themes():
@@ -630,6 +799,33 @@ def main(argv=None):
     sp.add_argument("--spec", help="check: business model spec that supplies geography and the ledger")
     sp.add_argument("--profile", help="check: profile directory whose ledger resolves citations")
     sp.set_defaults(fn=cmd_business_model)
+    sp = sub.add_parser("shark-tank", help="investor simulation: profiles | context | base-read | queue | check | "
+                                           "session | record")
+    sp.add_argument("action", choices=["profiles", "context", "base-read", "queue", "check", "session", "record"])
+    sp.add_argument("target", nargs="?", help="context: profile directory; base-read/queue: base-read YAML; "
+                                              "check: Markdown document; session: session YAML or a queue document "
+                                              "(.md); record: session YAML")
+    sp.add_argument("--library", action="append", default=[], help="extra investor library directory (repeatable)")
+    sp.add_argument("--no-shipped", action="store_true", help="do not load the shipped investor library")
+    sp.add_argument("--today", help="date that drives staleness rules (YYYY-MM-DD; default: today)")
+    sp.add_argument("--json", action="store_true")
+    sp.add_argument("--id", help="profiles: show one profile's lenses and emphasis")
+    sp.add_argument("--profile", help="startup profile directory whose evidence.yaml is used")
+    sp.add_argument("--out", help="base-read: write the rendered Markdown here")
+    sp.add_argument("--investors", help="queue: comma-separated profile ids")
+    sp.add_argument("--budget", type=int, default=10, help="queue: number of questions (default 10)")
+    sp.add_argument("--against", action="append", default=[], help="check: other evaluation or panel documents "
+                                                                    "for pairwise checks (repeatable)")
+    sp.add_argument("--confirmed", action="store_true", help="record: the founder agreed to record the facts")
+    sp.add_argument("--base-read", help="check: base-read YAML for the stance rule (default: base-read.yaml beside "
+                                        "the document)")
+    sp.add_argument("--no-base-read", action="store_true", help="check: accept a weaker check without a base read "
+                                                                "(a counted warning instead of an error)")
+    sp.add_argument("--no-ledger", action="store_true", help="check: accept a weaker check without a ledger (a "
+                                                             "counted warning instead of an error)")
+    sp.add_argument("--chat", action="store_true", help="check: the file is a chat reply, not a document (the "
+                                                        "label is required only for an investor-specific reading)")
+    sp.set_defaults(fn=cmd_shark_tank)
     sub.add_parser("themes", help="list design themes").set_defaults(fn=cmd_themes)
     a = p.parse_args(argv)
     return a.fn(a) or 0

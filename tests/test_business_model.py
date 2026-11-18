@@ -129,10 +129,10 @@ def test_skill_discovered_and_registered(root):
     assert len(text.splitlines()) < 500
     r = subprocess.run([sys.executable, os.path.join(root, "scripts", "validate_skills.py")], capture_output=True,
                        text=True)
-    assert r.returncode == 0 and "9 skills, 0 errors" in r.stdout, r.stdout
+    assert r.returncode == 0 and " skills, 0 errors" in r.stdout, r.stdout      # exact count and version are pinned in test_shark_tank.py
     plugin = json.load(open(os.path.join(root, ".claude-plugin", "plugin.json")))
     market = json.load(open(os.path.join(root, ".claude-plugin", "marketplace.json")))
-    assert plugin["version"] == "1.3.0" and market["plugins"][0]["version"] == "1.3.0" and "skills" not in plugin
+    assert plugin["version"] == market["plugins"][0]["version"] and "skills" not in plugin
     for t in ("business-model-spec.yaml", "business-model-canvas.md", "value-proposition-canvas.md",
               "revenue-architecture.md", "cost-structure.md", "marketplace-model.md", "model-comparison.md",
               "assumption-register.yaml", "stress-test.md", "decision-summary.md"):
@@ -141,8 +141,9 @@ def test_skill_discovered_and_registered(root):
 
 
 def test_all_nine_skills_present(root):
+    """The original nine skills must always be present; later skills are added without removing any."""
     names = {os.path.basename(os.path.dirname(p)) for p in glob.glob(os.path.join(root, "skills", "*", "SKILL.md"))}
-    assert names == {"business-document-generator", "customer-discovery-validation", "fundraising-strategist",
+    assert names >= {"business-document-generator", "customer-discovery-validation", "fundraising-strategist",
                      "gtm-strategy-maker", "pitch-deck-maker", "startup-idea-evaluator", "startup-proposal-generator",
                      "startup-research", "business-model-designer"}
 

@@ -14,4 +14,6 @@ Please report security issues privately through GitHub's "Report a vulnerability
 
 ## Scope notes
 
+Corrections to, or removal of, an investor profile in `skills/investor-panel-evaluator/investors/` can be requested through the same private route or by opening an issue; see the "Corrections and removal" section of that folder's README. These are not security reports, but the private route is there for anyone who prefers not to write publicly.
+
 Generated documents may contain confidential business information. Treat them like any other confidential file. Investor research must use public, professional information only (see `knowledge/frameworks/investor-fit.md`).

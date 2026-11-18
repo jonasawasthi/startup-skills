@@ -1,6 +1,6 @@
 # Startup Skills
 
-**Evidence-based startup intelligence for Claude Code.** Nine composable Agent Skills and a tested document engine help founders go from **idea → evaluation → customer discovery and validation → business model design → strategy → product analysis → go-to-market → business plan → pitch deck → fundraising**. They never invent the numbers.
+**Evidence-based startup intelligence for Claude Code.** Ten composable Agent Skills and a tested document engine help founders go from **idea → evaluation → customer discovery and validation → business model design → strategy → product analysis → go-to-market → business plan → pitch deck → fundraising**, with an investor-panel simulation to rehearse before the raise. They never invent the numbers.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -28,6 +28,7 @@ Most AI pitch-deck tools produce generic slides full of plausible-sounding stati
 | [`business-model-designer`](skills/business-model-designer/SKILL.md) | Evidence-labelled Business Model Canvas and per-segment Value Proposition Canvases, model classification (SaaS to marketplace to hybrid), revenue streams on a proposed-to-repeatable ladder, fixed/variable/unknown costs, marketplace sides and liquidity (GMV vs platform revenue vs seller earnings), payment and regulatory dependencies to verify, alternatives on defined qualitative scales, an assumption register on the shared ledger and stress tests. It never invents prices, costs, volumes or probabilities, and never treats a canvas as proof | Business model report (DOCX/PDF/MD), section documents, workbook (XLSX), ledger entries |
 | [`gtm-strategy-maker`](skills/gtm-strategy-maker/SKILL.md) | Evidence-backed go-to-market strategy: segments, ICPs, positioning, a prioritised channel matrix with experiments, launch plans, marketplace cold start, pricing hypotheses, AARRR metrics and 30/60/90-day to 12-month roadmaps sized to the team. It adapts to the business model and never invents conversion rates, CAC or traction | Strategy (DOCX/PDF/MD), channel matrix, KPI dashboard (XLSX), roadmap |
 | [`fundraising-strategist`](skills/fundraising-strategist/SKILL.md) | Readiness, raise planning, evidence-based investor fit (never implies interest), outreach, diligence and negotiation prep | Readiness, target list, outreach drafts, data-room index |
+| [`investor-panel-evaluator`](skills/investor-panel-evaluator/SKILL.md) | An analytical simulation of how investors from Shark Tank (US, India, Nepal, Australia) and Dragons' Den (UK) would read a startup. It rates the business once on 15 dimensions from the shared ledger (Strong, Adequate, Weak or Unknown, never a score), then reads that through each investor's sourced profile, so differences between investors are traceable. Individual evaluations, a moderated panel of 3–7, one-question-per-turn founder interrogation, and a verdict that separates good, investable and investment-ready. Its rules forbid speaking for or quoting real people and stating offers or valuations; the engine checks common phrasings and a reviewer read covers the rest. Not affiliated with the programmes or the people profiled | Base read, investor evaluations, panel report, interrogation debrief, verdict (MD/DOCX/PDF) |
 
 The full catalogue is in [docs/skills-catalog.md](docs/skills-catalog.md).
 
@@ -80,6 +81,7 @@ Evaluate this idea: a marketplace where Nepali creators sell memberships to fans
 /startup-skills:gtm-strategy-maker Build our go-to-market plan for the first 90 days, using our profile.
 /startup-skills:customer-discovery-validation Plan interviews for both sides of our marketplace, then analyse my notes.
 /startup-skills:business-model-designer Design and stress-test our business model, and compare it with two alternatives.
+/startup-skills:investor-panel-evaluator Run a panel of the current Dragons' Den investors on our startup, then question me one question at a time.
 ```
 
 ### Typical workflow
@@ -91,7 +93,8 @@ Evaluate this idea: a marketplace where Nepali creators sell memberships to fans
 5. **Deck**: `pitch-deck-maker` scans the codebase, writes a deck spec, builds the PPTX/PDF and inspects the previews.
 6. **Go to market**: `gtm-strategy-maker` picks the beachhead, channels and experiments, and sizes the roadmap to the team.
 7. **Proposal**: `startup-proposal-generator` writes the business plan and the financial model from the same evidence.
-8. **Raise**: `fundraising-strategist` assesses readiness, investor fit and outreach.
+8. **Rehearse**: `investor-panel-evaluator` reads the same evidence through sourced investor profiles, shows where a panel would press, and questions the founder one question at a time. It is a simulation for practice, not a statement by any investor.
+9. **Raise**: `fundraising-strategist` assesses readiness, investor fit and outreach.
 
 All skills read and write the same profile, so the deck, proposal, GTM strategy and plan always tell the same story.
 
@@ -117,6 +120,14 @@ bin/startup-kit business-model design PROFILE --out DIR           # inventory + 
 bin/startup-kit business-model report bm.yaml --out DIR --xlsx    # canvas, revenue, costs, marketplace, stress (Markdown+)
 bin/startup-kit business-model assumptions bm.yaml --record       # append untested assumptions to the ledger
 bin/startup-kit business-model check report.md --spec bm.yaml     # GMV-as-revenue, liquidity, payment and legal claims
+bin/startup-kit shark-tank profiles                               # validate and list the investor profile library
+bin/startup-kit shark-tank context PROFILE                        # read-only inventory of the profile, ledger and other outputs
+bin/startup-kit shark-tank base-read base-read.yaml --profile PROFILE --out base-read.md   # 15 dimensions, evidence ceiling
+bin/startup-kit shark-tank queue base-read.yaml --investors a,b,c # interrogation question priority
+bin/startup-kit shark-tank check evaluation.md --profile PROFILE  # simulation label, quotes, offers, traceability
+bin/startup-kit shark-tank check reply.md --chat --profile PROFILE  # the same voice and offer guards for a chat reply
+bin/startup-kit shark-tank session session.yaml                   # one question per turn, founder-provided facts only
+bin/startup-kit shark-tank record session.yaml --profile PROFILE --confirmed   # append founder-provided facts to the ledger
 bin/startup-kit check <files…>   &&   bin/startup-kit preview deck.pdf
 ```
 
@@ -138,7 +149,8 @@ Every artifact is re-opened with an independent reader by `startup-kit check`. T
 ## Repository layout
 
 ```
-skills/            nine Agent Skills (SKILL.md + references/ + examples/)
+skills/            ten Agent Skills (SKILL.md + references/, plus examples/ or assets/); investor-panel-evaluator also holds the
+                   investor profile library (investors/)
 knowledge/         attributed summaries (YC, Paul Graham, Sequoia, a16z, NFX, BVP, Stripe Atlas, HBR; GTM: Dunford,
                    Moore, Ellis, Reforge, First Round, HubSpot, OpenView; customer discovery: Blank, Fitzpatrick,
                    Ries, Strategyzer, Christensen; business model: Osterwalder, Gurley, NFX, a16z, Stripe, NRB)
@@ -146,9 +158,11 @@ knowledge/         attributed summaries (YC, Paul Graham, Sequoia, a16z, NFX, BV
 lib/startup_kit/   the engine: evidence ledger, scanner, calculators, theme, renderers, validators, CLI
 templates/         the startup-profile template
 examples/fieldnote fictional end-to-end example (ledger, deck, proposal, model, GTM spec, customer discovery,
-                   business model)
+                   business model, investor-panel simulation)
+examples/ottlebrook second fictional company, a physical product sold through a retailer, for the investor-panel
+                   simulation (a panel that agrees, and a verdict not to proceed in the current form)
 docs/              architecture, design system, research notes, skills catalogue
-tests/             227 tests: unit, guards (fabrication, contradictions, incomplete data), golden builds, CLI integration
+tests/             789 tests: unit, guards (fabrication, contradictions, incomplete data), golden builds, CLI integration
 scripts/           setup, install, skill-spec validator, link checker
 outputs/           your generated work: gitignored, private by default
 ```
@@ -156,13 +170,13 @@ outputs/           your generated work: gitignored, private by default
 ## Quality assurance
 
 ```bash
-.venv/bin/python -m pytest          # 227 tests (set STARTUP_KIT_NETWORK=1 to include the live link check)
+.venv/bin/python -m pytest          # 789 tests (set STARTUP_KIT_NETWORK=1 to include the live link check)
 python3 scripts/validate_skills.py  # Agent Skills spec compliance
-python3 scripts/check_links.py      # re-verify knowledge-base URLs (title-matched)
+python3 scripts/check_links.py      # re-verify knowledge-base and investor-profile URLs (title-matched)
 claude plugin validate .            # plugin + marketplace manifests
 ```
 
-Compatibility was verified on Claude Code 2.1.270 (macOS) by loading the plugin with `--plugin-dir`, confirming all nine skills appear as `startup-skills:*`, and invoking a skill whose setup command resolved the toolkit and passed `doctor`.
+Compatibility of v1.3.0 was verified on Claude Code 2.1.270 (macOS) by loading the plugin with `--plugin-dir`, confirming all nine skills of that version appear as `startup-skills:*`, and invoking a skill whose setup command resolved the toolkit and passed `doctor`. For v1.4.0, `claude plugin validate .` passes, and on Claude Code 2.1.323 (macOS) a headless session started with `--plugin-dir` listed all ten skills as `startup-skills:*`; a plain request about a programme investor loaded `startup-skills:investor-panel-evaluator`, which ran the toolkit's `shark-tank context` command.
 
 ## Attribution and source policy
 
@@ -177,3 +191,5 @@ The knowledge base contains **original summaries and frameworks** with attributi
 [MIT](LICENSE) © 2026 Jonas Awasthi. Generated documents belong to their authors. Third-party sources remain the property of their owners.
 
 > Startup Skills produces analysis, not legal, tax or investment advice.
+
+> The investor-panel simulation is independent work. It is not affiliated with, endorsed by or sponsored by Shark Tank, Dragons' Den, their broadcasters or format owners, or any person profiled. Programme names and people's names identify the public record being analysed; Shark Tank and Dragons' Den are trademarks of their respective owners. Corrections and removal requests: see [the investor library](skills/investor-panel-evaluator/investors/README.md#corrections-and-removal).
