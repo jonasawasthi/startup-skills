@@ -1,0 +1,225 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company. Every interview, quotation, survey answer and
+# experiment result below is invented to illustrate the customer-discovery-validation skill.
+discovery:
+  company: Fieldnote (fictional example)
+  profile: ../startup-profile
+  stage: seed
+  notes_dir: interviews
+  date: November 2026
+  illustrative: "Fictional example: all participants, quotations and results are invented for illustration."
+  objectives:
+    - Confirm which cooperatives feel month-end payment reconciliation as a severe, frequent problem
+    - Learn how field agents record deliveries today, and what stops them using phones
+    - Test whether paying pilots will commit to an annual prepayment
+  methodology: >-
+    Six semi-structured interviews in September 2026 (four cooperative managers, two field agents) using the
+    behaviour-first interview guide; two had recorded transcripts. A 12-question survey was sent to active field
+    agents in pilot cooperatives. One pre-order experiment ran with the five paying pilots.
+  summary: >-
+    In this fictional example, three of four managers described month-end reconciliation as a recurring multi-day
+    task, and one manager with an in-house accountant did not. That suggests the beachhead excludes cooperatives
+    with accountants. Field agents described lost and smudged paper slips. Three of five paying pilots prepaid an
+    annual plan [E-017], the first committed willingness-to-pay evidence. Retention and distribution hypotheses
+    remain untested.
+  next_steps:
+    - Re-run the manager guide with 6 more cooperatives of 200–600 members without an accountant
+    - Run the federation introduction experiment (X3)
+    - Measure 90-day retention of the first paying cohort before any paid acquisition
+
+business_model:
+  type: b2b-saas
+
+segments:
+  - id: S1
+    name: Managers of mid-size dairy cooperatives
+    problem_area: month-end payment reconciliation
+    side: customer
+    market: b2b
+    roles: {user: Cooperative manager (console), buyer: Cooperative manager, decision_maker: Cooperative board, influencers: [Board treasurer, Regional federation], beneficiary: Member farmers}
+    profile: Cooperatives of roughly 200–600 members collecting milk daily; no in-house accountant (hypothesis)
+    jobs: ["When the month closes, pay every member correctly and on time, so members trust the cooperative"]
+    needs: [Fewer payment disputes, Less time at month-end]
+    early_adopter_signals: [Uses spreadsheets for reconciliation, Recent member complaints about payments]
+    scores: {pain: 4, access: 4, willingness_to_pay: 3, reachable_size: 3}
+    why: Pain described in three of four interviews; reachable through federations; WTP evidence from one prepayment test only.
+    criteria: [Manages a cooperative of 200–600 members, Ran at least one payment cycle in the last 2 months]
+    recruitment: Pilot cooperatives and federation member lists
+  - id: S2
+    name: Field agents
+    problem_area: recording milk deliveries
+    side: customer
+    market: b2b
+    roles: {user: Field agent, buyer: Cooperative manager, decision_maker: Cooperative board}
+    jobs: ["When collecting milk, record each delivery so that any dispute can be settled"]
+    scores: {pain: 3, access: 5, willingness_to_pay: 1, reachable_size: 4}
+    why: Users, not buyers; easy to reach through pilot cooperatives.
+    criteria: [Collects deliveries at least 4 days a week]
+    recruitment: Through managers of pilot cooperatives
+  - id: S3
+    name: Dairy processors
+    problem_area: planning milk collection volumes
+    side: other
+    market: b2b
+    roles: {user: Procurement officer, buyer: Procurement manager, decision_maker: Plant director}
+    jobs: ["Before pickup, know verified volumes so collection routes can be planned"]
+    criteria: [Buys from at least 5 cooperatives]
+    recruitment: Introductions from pilot cooperatives
+
+hypotheses:
+  - id: H1
+    category: problem
+    segment: S1
+    dimension: existence
+    statement: Managers of mid-size cooperatives spend more than a day each month reconciling member payments
+    why_it_matters: The manager console is built around this problem
+    supporting: [E-010, E-011, E-013]
+    contradicting: [E-012]
+    conflict_note: I-03 has an in-house accountant; the segment definition now excludes cooperatives with accountants
+    themes: [S1/problem:payment-reconciliation]
+    risk: high
+    confidence: medium
+    validation_method: Problem interviews with the manager guide
+    success_criteria: Most interviewed managers describe a specific recent multi-day reconciliation
+    status: supported
+    next_action: Interview 6 more managers inside the narrowed segment
+  - id: H2
+    category: problem
+    segment: S1
+    dimension: severity
+    statement: Reconciliation errors cause member complaints every payment cycle
+    why_it_matters: Complaints make the problem urgent for the board, not just the manager
+    supporting: [E-010, E-013]
+    themes: [S1/problem:payment-errors]
+    risk: medium
+    confidence: low
+    validation_method: Interviews plus complaint logs from 5 cooperatives
+    success_criteria: Complaint logs show at least one payment complaint per cycle in most cooperatives
+    status: testing
+    next_action: Run experiment X2
+  - id: H3
+    category: pricing
+    segment: S1
+    dimension: purchase-commitment
+    statement: Paying pilots will prepay USD 400 for an annual plan
+    why_it_matters: Annual prepayment funds onboarding and reduces churn risk
+    supporting: [E-017]
+    risk: high
+    confidence: medium
+    validation_method: Pre-order offer to the five paying pilots (X1)
+    success_criteria: At least 3 of 5 prepay
+    status: supported
+    next_action: Offer the annual plan to the next pilot cohort
+  - id: H4
+    category: solution
+    segment: S2
+    dimension: solution-relevance
+    statement: Field agents prefer recording deliveries on a phone to paper slips when it works offline
+    why_it_matters: Agent adoption drives data quality for managers
+    supporting: [E-014, E-015]
+    themes: [S2/problem:paper-slips]
+    risk: medium
+    confidence: medium
+    validation_method: Agent interviews and an active-user survey
+    success_criteria: Agents describe concrete problems with paper, and active agents would be very disappointed without the app
+    status: supported
+    next_action: Ask managers for usage logs to confirm daily use
+  - id: H5
+    category: distribution
+    segment: S1
+    statement: Regional federations will introduce member cooperatives to Fieldnote
+    why_it_matters: The GTM plan relies on federations as the second channel
+    risk: high
+    confidence: low
+    validation_method: Federation training day (X3)
+    success_criteria: At least 10 introductions within a quarter
+    status: untested
+    next_action: Run X3
+  - id: H6
+    category: retention
+    segment: S1
+    statement: Paying cooperatives renew after the first year
+    why_it_matters: Unit economics assume low churn [E-009]
+    supporting: [E-009]
+    risk: high
+    confidence: low
+    validation_method: 90-day and 12-month cohort retention
+    success_criteria: No more than 1 of the first 5 paying cooperatives cancels in 12 months
+    status: untested
+    next_action: Track the first cohort monthly
+  - id: H7
+    category: market
+    segment: S3
+    statement: Processors would pay for verified delivery volumes
+    why_it_matters: The buyer portal (planned) depends on it
+    risk: medium
+    confidence: low
+    validation_method: Problem interviews with 5 processors
+    success_criteria: Processors describe a recent costly planning error caused by unknown volumes
+    status: untested
+    next_action: Ask pilot cooperatives for processor introductions
+
+experiments:
+  - id: X1
+    name: Annual prepayment offer
+    hypothesis: H3
+    type: pre-order
+    objective: Learn whether paying pilots commit cash to a year of Fieldnote
+    target_customer: The five paying pilot cooperatives (S1)
+    method: Offer the annual plan at USD 400 with a refund if cancelled within 30 days
+    resources: CEO time; invoice template
+    duration: 6 weeks
+    cost: USD 0 cash; founder time
+    steps: [Present at each board meeting, Send the invoice, Record payments in the ledger]
+    success: {metric: prepaid, op: ">=", value: 3}
+    failure: {metric: prepaid, op: "<=", value: 0}
+    threshold_basis: founder
+    evidence_to_collect: Paid invoices; reasons given by cooperatives that declined
+    biases: Pilots are already friendly early adopters; refund option lowers the commitment
+    decision_rule: {success: Offer the annual plan to all new pilots, failure: Keep monthly pricing and re-interview on budget cycles, inconclusive: Repeat with the next cohort}
+    results: {status: complete, measured: {prepaid: 3}, evidence: [E-017]}
+  - id: X2
+    name: Complaint-log review
+    hypothesis: H2
+    type: interviews
+    objective: Check whether payment errors cause complaints every cycle
+    target_customer: Managers in S1
+    method: Ask 5 managers to share last cycle's complaint log (anonymised) during a follow-up interview
+    resources: CEO; complaint template
+    duration: 3 weeks
+    cost: USD 0
+    steps: [Request logs, Code complaints by cause, Record counts in the ledger]
+    success: Payment-error complaints in at least 3 of 5 cooperatives last cycle
+    failure: Payment-error complaints in at most 1 of 5 cooperatives
+    threshold_basis: heuristic
+    evidence_to_collect: Complaint counts by cause, per cooperative
+    biases: Managers may under-record complaints; small sample
+    decision_rule: {success: Lead positioning with dispute reduction, failure: Lead with time saved, inconclusive: Extend to 5 more cooperatives}
+  - id: X3
+    name: Federation training day
+    hypothesis: H5
+    type: manual-service
+    objective: Learn whether a federation will introduce member cooperatives
+    target_customer: One regional federation
+    method: Co-host a reconciliation training day, then ask for introductions
+    resources: CEO; pilot case study
+    duration: 12 weeks
+    cost: USD 1,500 (venue and travel)
+    steps: [Pitch the training day, Run it, Ask for introductions, Track meetings]
+    success: At least 10 cooperative introductions in 12 weeks
+    failure: No introductions after 12 weeks
+    threshold_basis: founder
+    evidence_to_collect: Introductions and meetings booked, by federation
+    biases: One federation may not represent others
+    decision_rule: {success: Make federations the second channel, failure: Drop the channel and focus on founder-led sales, inconclusive: Try a second federation}
+
+surveys:
+  - id: SV1
+    file: surveys/agent-pmf.csv
+    segment: S2
+    sample: active-users
+    pmf_column: How would you feel if you could no longer use Fieldnote?
+
+pmf:
+  inputs:
+    activated: {value: 14, evidence: [E-001]}
+    new_customers: {value: 5, evidence: [E-007]}

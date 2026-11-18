@@ -1,0 +1,143 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company, and every founder answer below is scripted, fictional and
+# illustrative. The questions are raised through the documented lenses of real investors' sourced profiles; they
+# are never words spoken by those people. Spec: the skill's references/interrogation.md.
+#
+# Validate:  bin/startup-kit shark-tank session examples/fieldnote/shark-tank/interrogation/2026-11-15-a.yaml
+#
+# One question asks for one decisive unknown (one fact or one figure). The engine's queue gave D12 once; because
+# runway needs two figures (cash and monthly spending), they are asked as two root questions (Q1, Q2), and the
+# channel and its cost on D08 as two follow-ups (Q4a, Q4b).
+#
+# This file is left at status: debrief, with the recording question asked and unanswered. The example stops
+# there on purpose: the tracked Fieldnote ledger must not change, so `shark-tank record ... --confirmed` is never
+# run against it. In a real session, record runs only after the founder says yes in the conversation.
+session: "2026-11-15-a"
+mode: panel
+investors: [steve-baxter, hem-raj-dhakal, naomi-simson]
+budget: 10
+status: debrief
+# Remaining queue at the debrief. Built with:
+#   bin/startup-kit shark-tank queue examples/fieldnote/shark-tank/base-read.yaml \
+#     --investors steve-baxter,hem-raj-dhakal,naomi-simson --budget 10 --profile examples/fieldnote/startup-profile --json
+# Q1 to Q5 were asked (see turns). Splitting D12 into two root questions used one extra place in the budget, so the
+# queue's tenth item (D13) falls outside it. Question texts are written for Fieldnote from each lens's evidence_demanded.
+queue:
+  - {id: Q6, dimension: D15, lens: L1, investor: hem-raj-dhakal, tier: 4, text: "Which law in the launch country governs holding members' payment records?"}
+  - {id: Q7, dimension: D02, lens: L4, investor: steve-baxter, tier: 5, text: "How many cooperatives outside the pilot group have agreed to pay the annual price?"}
+  - {id: Q8, dimension: D04, lens: L3, investor: hem-raj-dhakal, tier: 5, text: "Which software, if any, do cooperatives in the launch country already use to reconcile member payments?"}
+  - {id: Q9, dimension: D09, lens: L4, investor: hem-raj-dhakal, tier: 5, text: "What does it cost to bring a cooperative outside the pilot region onto Fieldnote?"}
+  - {id: Q10, dimension: D11, lens: L4, investor: naomi-simson, tier: 5, text: "What goes wrong most often for a cooperative in a normal month?"}
+turns:
+  - n: 1
+    question:
+      id: Q1
+      dimension: D12
+      lens: L3
+      investor: steve-baxter
+      text: "How much cash does Fieldnote hold today?"
+      follow_up_of: null
+    answer: >-
+      (Fictional, illustrative founder answer.) About 38,000 dollars in the bank as of last Friday.
+    assessment: {specificity: clear, evidence: partial, financial: clear, strategic: n/a, customer: n/a, execution: n/a, risk: n/a}
+    decision: move-on
+    new_facts:
+      - {claim: "Cash at bank, as stated by the founder in interrogation session 2026-11-15-a", key: finance.cash, value: 38000, unit: USD, proposed_status: reported}
+  - n: 2
+    question:
+      id: Q2
+      dimension: D12
+      lens: L3
+      investor: naomi-simson
+      text: "What does Fieldnote spend in a typical month?"
+      follow_up_of: null
+    answer: >-
+      (Fictional, illustrative founder answer.) About 3,100 dollars: hosting, travel to cooperatives and two small
+      stipends for the founders. So roughly a year of cash, which takes us just past the first annual renewals next
+      October.
+    assessment: {specificity: clear, evidence: partial, financial: clear, strategic: partial, customer: n/a, execution: n/a, risk: partial}
+    decision: move-on
+    new_facts:
+      - {claim: "Monthly spending (hosting, travel, founder stipends), as stated by the founder", key: finance.monthly_burn, value: 3100, unit: USD per month, proposed_status: reported}
+  - n: 3
+    question:
+      id: Q3
+      dimension: D07
+      lens: L3
+      investor: naomi-simson
+      text: "How many hours of support does one paying cooperative take in a month, as logged rather than estimated?"
+      follow_up_of: null
+    answer: >-
+      (Fictional, illustrative founder answer.) Honestly, I don't know. We haven't logged support time. Some weeks a
+      cooperative needs nothing, and in its first month it can take a day or two of one of us. I could guess, but I'd
+      rather not give a number I can't back up. We should start logging it.
+    assessment: {specificity: partial, evidence: missing, financial: missing, strategic: n/a, customer: n/a, execution: partial, risk: clear}
+    decision: move-on
+    new_facts: []
+  - n: 4
+    question:
+      id: Q4
+      dimension: D08
+      lens: L2
+      investor: hem-raj-dhakal
+      text: "How did the fourteen pilot cooperatives first hear of Fieldnote?"
+      follow_up_of: null
+    answer: >-
+      (Fictional, illustrative founder answer.) Mostly word of mouth. Cooperatives talk to each other, and once a
+      manager sees it working next door they want it too. Our plan is to scale through word of mouth and the
+      federations.
+    assessment: {specificity: missing, evidence: missing, financial: n/a, strategic: missing, customer: partial, execution: missing, risk: missing}
+    decision: follow-up
+    new_facts: []
+  - n: 5
+    question:
+      id: Q4a
+      dimension: D08
+      lens: L2
+      investor: hem-raj-dhakal
+      text: "Which channel brought in most of the last three paying cooperatives?"
+      follow_up_of: Q4
+    answer: >-
+      (Fictional, illustrative founder answer.) All three heard about us from a neighbouring cooperative, and then I
+      visited them.
+    assessment: {specificity: clear, evidence: partial, financial: n/a, strategic: partial, customer: clear, execution: partial, risk: n/a}
+    decision: follow-up
+    new_facts: []
+  - n: 6
+    question:
+      id: Q4b
+      dimension: D08
+      lens: L2
+      investor: hem-raj-dhakal
+      text: "What did winning one of those three cooperatives cost in travel?"
+      follow_up_of: Q4a
+    answer: >-
+      (Fictional, illustrative founder answer.) Each one took two visits at roughly 150 dollars of travel per visit,
+      so about 300 dollars each, plus about two days of my time.
+    assessment: {specificity: clear, evidence: partial, financial: partial, strategic: n/a, customer: n/a, execution: partial, risk: n/a}
+    decision: move-on
+    new_facts:
+      - {claim: "Travel cost to win each of the last three paying cooperatives (referral from a neighbouring cooperative, then two founder visits), as stated by the founder", key: acquisition.travel_cost_per_coop, value: 300, unit: USD per paying cooperative, proposed_status: reported}
+  - n: 7
+    question:
+      id: Q5
+      dimension: D10
+      lens: L4
+      investor: steve-baxter
+      text: "Which step of onboarding a new cooperative still needs a founder on site?"
+      follow_up_of: null
+    answer: >-
+      (Fictional, illustrative founder answer.) The first payment cycle. We sit with the manager and reconcile their
+      first month together, because the member lists are always messy. We've started recording screen videos of it,
+      and a federation trainer could maybe do it after a training day, but we haven't tried that. I need to stop
+      there. Can we do the debrief now?
+    assessment: {specificity: clear, evidence: missing, financial: n/a, strategic: partial, customer: clear, execution: partial, risk: partial}
+    decision: stop
+    new_facts: []
+pending_ledger:
+  - {id: F1, claim: "Cash at bank, as stated by the founder in interrogation session 2026-11-15-a", key: finance.cash, value: 38000, unit: USD, turn: 1, proposed_status: reported}
+  - {id: F2, claim: "Monthly spending (hosting, travel, founder stipends), as stated by the founder", key: finance.monthly_burn, value: 3100, unit: USD per month, turn: 2, proposed_status: reported}
+  - {id: F3, claim: "Travel cost to win each of the last three paying cooperatives (referral from a neighbouring cooperative, then two founder visits), as stated by the founder", key: acquisition.travel_cost_per_coop, value: 300, unit: USD per paying cooperative, turn: 6, proposed_status: reported}
+next_action: >-
+  Await the founder's answer to the single recording question in the debrief message. On yes, run
+  shark-tank record --confirmed and rebuild the base read; on no, record nothing and mark F1 to F3 not recorded.
+  (This example stops here; see the header comment.)

@@ -1,0 +1,19 @@
+# Experiment card (paste under `experiments:`). All 13 fields are required.
+- id: X1
+  name: ""
+  hypothesis: H1
+  type: concierge          # interviews | landing-page | waitlist | prototype | concierge | wizard-of-oz | paid-pilot | pre-order | pricing | ab-test | smoke-test | manual-service | retention | survey
+  objective: ""
+  target_customer: ""
+  method: ""
+  resources: ""
+  duration: ""
+  cost: ""
+  steps: []
+  success: {metric: "", op: ">=", value: 0}    # or a sentence
+  failure: {metric: "", op: "<=", value: 0}
+  threshold_basis: heuristic                   # heuristic | benchmark (+ benchmark_source) | founder
+  evidence_to_collect: ""
+  biases: ""
+  decision_rule: {success: "", failure: "", inconclusive: ""}
+  results: {status: planned}                   # complete: add measured and evidence

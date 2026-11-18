@@ -1,0 +1,16 @@
+# Hypothesis register entries (paste under `hypotheses:` in the discovery spec).
+# Evidence IDs must exist in the shared ledger; status changes only when the evidence supports it.
+- id: H1
+  category: problem        # problem | customer | market | solution | pricing | distribution | behavioral | retention
+  segment: S1
+  dimension: existence     # optional: existence | frequency | severity | urgency | dissatisfaction | demand-for-alternatives | solution-relevance | behaviour-change | purchase-commitment
+  statement: ""
+  why_it_matters: ""
+  supporting: []
+  contradicting: []
+  risk: high
+  confidence: low          # declared; the engine computes evidence strength separately
+  validation_method: ""
+  success_criteria: ""
+  status: untested         # untested | testing | supported | contradicted | inconclusive
+  next_action: ""

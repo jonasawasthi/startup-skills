@@ -1,0 +1,40 @@
+# Business model spec template. Copy to outputs/<startup>/business-model/<startup>-business-model.yaml.
+# Format: skills/business-model-designer/references/business-model-spec.md
+# Rules: every item has a basis; numbers carry evidence or a status; never invent prices, costs or volumes.
+# Quote any text containing a comma, colon or [E-001] inside {flow: mappings}.
+design:
+  company: ""
+  profile: ../startup-profile
+  discovery: ../customer-discovery/<startup>-discovery.yaml   # remove if there is no discovery spec
+  stage: idea
+  date: ""
+  currency: ""
+  geography: []
+  types: []                 # e.g. [marketplace, commission, education, b2c]
+  recommended: ""           # alternative id, once decided
+  illustrative: ""          # disclaimer when values are hypothetical
+  summary: ""
+  decision: ""
+  next_steps: []
+
+canvas:
+  customer_segments: {items: [{text: TODO, basis: unknown}]}
+  value_propositions: {items: [{text: TODO, basis: unknown}]}
+  channels: {items: [{text: TODO, basis: unknown}]}
+  customer_relationships: {items: [{text: TODO, basis: unknown}]}
+  revenue_streams: {items: [{text: TODO, basis: unknown}]}
+  key_resources: {items: [{text: TODO, basis: unknown}]}
+  key_activities: {items: [{text: TODO, basis: unknown}]}
+  key_partnerships: {items: [{text: TODO, basis: unknown}]}
+  cost_structure: {items: [{text: TODO, basis: unknown}]}
+
+value_propositions: []      # see value-proposition-canvas.md
+revenue_streams: []         # see revenue-architecture.md
+costs: []                   # see cost-structure.md
+dependencies: []            # payment, payout, tax, legal, regulatory: status + question + confirm_with
+assumptions: []             # see assumption-register.yaml
+alternatives: []            # see model-comparison.md
+stress:
+  inputs: {}
+  scenarios: []
+  mitigations: {}

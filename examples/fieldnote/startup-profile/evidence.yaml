@@ -77,3 +77,100 @@
   confidence: low
   source: {type: analysis, ref: "Too early to measure; planning assumption"}
   owner: CFO
+
+- id: E-010
+  claim: 'Customer interview I-01 (S1: Managers of mid-size dairy cooperatives; in
+    person; participant M-01)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-01-manager.md
+    published: '2026-09-14'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-011
+  claim: 'Customer interview I-02 (S1: Managers of mid-size dairy cooperatives; video
+    call; participant M-02)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-02-manager.md
+    published: '2026-09-16'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-012
+  claim: 'Customer interview I-03 (S1: Managers of mid-size dairy cooperatives; phone;
+    participant M-03)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-03-manager.md
+    published: '2026-09-20'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-013
+  claim: 'Customer interview I-04 (S1: Managers of mid-size dairy cooperatives; in
+    person; participant M-04)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-04-manager.md
+    published: '2026-09-27'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-014
+  claim: 'Customer interview I-05 (S2: Field agents; in person; participant A-01)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-05-agent.md
+    published: '2026-09-21'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-015
+  claim: 'Customer interview I-06 (S2: Field agents; in person; participant A-02)'
+  status: reported
+  confidence: medium
+  source:
+    type: interview
+    ref: ../customer-discovery/interviews/I-06-agent.md
+    published: '2026-09-22'
+    accessed: '2026-11-08'
+  updated: '2026-11-08'
+  notes: Recorded by startup-kit discovery analyze --record. Statements are the participant's
+    own; interpretation lives in the notes file.
+- id: E-016
+  claim: Survey SV1 responses (S2; sample active-users)
+  status: reported
+  confidence: medium
+  source:
+    type: dataset
+    ref: ../customer-discovery/surveys/agent-pmf.csv
+    accessed: '2026-11-08'
+  signal: stated
+  updated: '2026-11-08'
+- id: E-017
+  claim: Paying pilot cooperatives that prepaid the USD 400 annual plan in experiment X1 (3 of 5; fictional)
+  key: discovery.x1.prepaid
+  value: 3
+  unit: cooperatives
+  status: verified
+  confidence: high
+  source: {type: dataset, ref: "Paid invoices export, Oct 2026 (fictional)", accessed: 2026-11-01}
+  signal: paid
+  updated: 2026-11-01

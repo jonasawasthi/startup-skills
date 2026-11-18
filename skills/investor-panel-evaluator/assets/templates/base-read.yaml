@@ -1,0 +1,179 @@
+# Base read: the single business judgement for one startup. Spec: references/dimensions.md.
+# Every dimension starts as Unknown with empty buckets. Raise a rating only when ledger evidence allows it
+# (evidence ceiling), then run:
+#   startup-kit shark-tank base-read base-read.yaml --profile ../startup-profile --out base-read.md
+# Buckets: verified = status verified; reported = status reported (label founder-sourced figures
+# "founder-provided"); estimate; assumption; disputed = unverified or contradicted; unknowns = open
+# questions as text, never E-IDs. Write [] for an empty bucket; never delete a bucket.
+startup: "<startup-slug>"           # a slug only, as in outputs/<startup>/
+# note: "<optional free text, for example: Fictional company for the tracked example; all figures invented.>"
+#   Use note for anything a reader must know about the base read as a whole (fictional data, a provisional
+#   type such as regulated, a market taken from the ledger). Never put evidence or ratings
+#   in it.
+as_of: "<YYYY-MM-DD>"
+ledger_snapshot: "<YYYY-MM-DD>"      # latest `updated` date in evidence.yaml when this read was made
+business_type: ["<saas | hardware | consumer-goods | services | marketplace | d2c | regulated>"]   # primary, optional secondary
+stage: "<pre-launch | launched-pre-revenue | early-revenue | trading | scaling>"
+ambition: unknown                    # venture | growth | lifestyle | unknown (as the founder states it)
+# imported_from: outputs/<startup>/startup-analysis/<startup>-evaluation.md   # only if an evaluator report exists
+# imported_date: "<YYYY-MM-DD>"
+dimensions:
+  D01:                                # Problem severity
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: true                    # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D01>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D02:                                # Market opportunity
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D02>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D03:                                # Customer demand
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: true                    # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D03>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D04:                                # Competitive landscape
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D04>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D05:                                # Product differentiation
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D05>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D06:                                # Business model
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D06>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D07:                                # Unit economics
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: true                    # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D07>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D08:                                # Customer acquisition
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D08>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D09:                                # Distribution
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D09>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D10:                                # Scalability
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D10>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D11:                                # Operational complexity (Strong means well controlled)
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D11>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D12:                                # Financial sustainability
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D12>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D13:                                # Defensibility
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D13>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D14:                                # Founder execution capability
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: true                    # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D14>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+  D15:                                # Legal and regulatory risks (Strong means well controlled)
+    rating: unknown                  # strong | adequate | weak | unknown
+    confidence: low                  # high | medium | low
+    critical: false                   # from references/business-types-and-stages.md
+    explanation: "<Two to four sentences: what the evidence shows, and why this level and not the one above or below.>"
+    evidence: {verified: [], reported: [], estimate: [], assumption: [], disputed: [], unknowns: ["<decisive question for D15>"]}
+    ceiling: unknown
+    upgrade_if: "<checkable evidence that would raise the rating>"
+    downgrade_if: "<checkable evidence that would lower the rating>"
+    divergence_note: null            # required where the crosswalk says so; name the report, its date, both ratings, ledger IDs
+# Optional: evaluator ratings behind a dimension, when imported_from is set. Example for D07:
+#   evaluator: {business-model: adequate}
+# Optional: the five judgements, normally written in verdict.md (references/verdict.md):
+# judgements:
+#   J1: {answer: not-yet-determinable, reason: "<reason>", dimensions: [D03]}
+#   J2: [{class: venture, answer: not-yet-determinable, reason: "<reason>"}]
+#   J3: {answer: no, reason: "<reason>"}
+#   J4: {answer: yes, reason: "<reason>"}
+#   J5: {answer: no, reason: "<reason>"}

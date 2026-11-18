@@ -1,0 +1,71 @@
+# GTM spec starter. Fill from the startup profile first; leave unknown values null.
+# Never type a measured value you do not have. See references/gtm-spec.md.
+gtm:
+  company: ""
+  profile: ../startup-profile
+  stage: ""            # idea | pre-seed | seed | series-a | growth (defaults to profile.yaml)
+  currency: USD
+
+business_model:
+  type: ""             # b2b-saas | enterprise | consumer-app | marketplace | creator-platform | education | devtool | services | ecommerce
+  secondary_types: []
+  self_serve: false
+
+team:
+  people: 1
+  hours_per_week: 20   # ask the founder: hours per person available for GTM
+  roles: [founder]
+
+budget:
+  available: null      # ask the founder; never invent
+
+products: []           # - {name: , status: live|built|in-development|planned|proposed|unknown, evidence: []}
+
+segments: []
+
+max_primary_channels: 3
+
+channels:
+  - key: founder-led-sales
+    side: both
+    scores: {customer_fit: null, economics: null, speed: null, resources: null, scalability: null}
+    why: ""
+    evidence: []
+    execution: []
+    resources: ""
+    cost: ""
+    leading_indicators: []
+    success_metrics: []
+    risks: []
+    experiment: {hypothesis: "", metric: "", threshold: "", budget: "", duration: "", kill: ""}
+
+pricing:
+  model: ""
+  value_metric: ""
+  price_points: []
+  competitors: []
+  experiments: []
+
+# marketplace:          # required for marketplace / creator-platform
+#   sides: []
+#   launch: {geographies: [], categories: [], justification: ""}
+#   atomic_network: ""
+#   liquidity_target: ""
+#   trust_safety: []
+#   disintermediation_defence: []
+
+metrics:
+  currency: USD
+  owner: founder
+  inputs: {}           # measured values only, e.g. signups: {value: 120, evidence: [E-040]}
+  targets: {}
+
+roadmap:
+  phases:
+    - {name: First 30 days, days: 30, objectives: [], tasks: [], kpis: [], success_criteria: []}
+    - {name: Days 31–60, days: 30, objectives: [], tasks: [], kpis: [], success_criteria: []}
+    - {name: Days 61–90, days: 30, objectives: [], tasks: [], kpis: [], success_criteria: []}
+    - {name: Months 4–6, days: 90, objectives: [], tasks: [], kpis: [], success_criteria: []}
+    - {name: Months 7–12, days: 185, objectives: [], tasks: [], kpis: [], success_criteria: []}
+
+cross_product: []

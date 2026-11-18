@@ -1,0 +1,9 @@
+[FICTIONAL TRANSCRIPT, illustrative only]
+Interviewer: Walk me through the last time you closed the month.
+M-01: Last month it took me two full days. I sit with the delivery slips, the bank file and a spreadsheet, and I match every member by hand.
+Interviewer: What happened when something didn't match?
+M-01: Three farmers came to the office because their payment was short. One of them had delivered twice on the same day and the slip was missing.
+Interviewer: How do you handle it today?
+M-01: Excel, and my nephew helps when he is home. We paid an accountant 15,000 for the year-end only.
+Interviewer: Who decides on spending for something like software?
+M-01: Anything above 300 dollars goes to the board.

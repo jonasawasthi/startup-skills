@@ -1,0 +1,23 @@
+# Startup profile: identity and defaults shared by every Startup Skills skill.
+# FICTIONAL EXAMPLE. Ottlebrook Pty Ltd is an invented company used to test Startup Skills. Not a real business.
+name: "Ottlebrook (fictional example)"   # Company name
+one_liner: "Ottlebrook designs a folding electric heated clothes airer for apartment households and sells it through a national homewares retailer and its own website (fictional)."            # One declarative sentence: what you do, for whom
+stage: seed              # idea | pre-seed | seed | series-a | growth
+industry: "Consumer small appliances (homewares)"
+geography: [Australia]            # e.g. [Nepal, India]
+website: ""
+codebase: ""             # absolute path to the product repository, if any
+confidentiality: public   # confidential | internal | public
+brand:
+  accent: ""             # hex, e.g. "#1F5C4A"
+  accent_2: ""
+  heading_font: ""       # must be installed on readers' machines for Office files
+  body_font: ""
+  logo: ""               # path relative to this file
+fundraising:
+  round: ""
+  amount: ""             # leave empty until the founder decides; never invent
+  instrument: ""         # SAFE | priced equity | convertible note | grant
+contacts:
+  founder_name: ""
+  email: ""

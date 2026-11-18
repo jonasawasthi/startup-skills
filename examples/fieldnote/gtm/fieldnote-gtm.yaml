@@ -1,0 +1,135 @@
+# FICTIONAL EXAMPLE. Fieldnote is not a real company. Scores, costs and targets are
+# illustrative planning inputs; evidence IDs refer to ../startup-profile/evidence.yaml.
+gtm:
+  company: Fieldnote
+  profile: ../startup-profile
+  stage: seed
+  currency: USD
+
+business_model:
+  type: b2b-saas
+  self_serve: false            # cooperatives are onboarded by the team
+
+team:
+  people: 2
+  hours_per_week: 30           # hours per person available for GTM (the rest is product)
+  roles: [ceo, cto]
+
+budget:
+  available: 18000             # GTM cash for 12 months (assumption, set by the founders)
+
+products:
+  - {name: Field app, status: live, evidence: [E-001]}
+  - {name: Manager console, status: built}
+  - {name: Buyer portal, status: planned}
+
+segments:
+  - name: Mid-size dairy cooperatives in the pilot region
+    role: customer
+    users: Field agents
+    buyer: Cooperative manager
+    influencers: [Board treasurer, Regional cooperative federation]
+    beneficiary: Member farmers (faster, correct payments)
+    evidence: [E-001, E-008]
+
+channels:
+  - key: founder-led-sales
+    side: both
+    scores: {customer_fit: 5, economics: 4, speed: 5, resources: 4, scalability: 2}
+    why: Managers buy from people they trust; 14 pilots came through direct visits.
+    evidence: [E-001]
+    execution: [Visit 20 cooperatives in the pilot region, Demo reconciliation on their own data, Offer a 60-day paid pilot]
+    resources: CEO two days a week; demo dataset
+    cost: Travel about USD 150 per visit (assumption)
+    leading_indicators: [Visits that end in a data-sharing agreement]
+    success_metrics: [Paid pilots signed]
+    risks: [Founder time; does not scale beyond one region]
+    experiment: {hypothesis: "At least 5 of 20 visited cooperatives start a paid pilot", metric: paid pilots, threshold: "≥ 5 of 20", budget: USD 3000, duration: 8 weeks, kill: "fewer than 2 pilots"}
+  - key: partnerships
+    side: both
+    scores: {customer_fit: 5, economics: 4, speed: 2, resources: 3, scalability: 4}
+    why: Regional federations advise member cooperatives on tools and could introduce many at once.
+    execution: [Present pilot results to two federations, Co-host a training day, Agree a referral fee]
+    resources: CEO; pilot case study
+    cost: Referral fee of 10% of first-year revenue (hypothesis)
+    leading_indicators: [Federation-hosted demos]
+    success_metrics: [Cooperatives introduced per quarter]
+    risks: [Slow decisions; federation may favour a competitor]
+    experiment: {hypothesis: "One federation introduces at least 10 cooperatives in a quarter", metric: introductions, threshold: "≥ 10", budget: USD 1500, duration: 12 weeks, kill: "no introductions after 12 weeks"}
+  - key: paid-ads
+    side: both
+    scores: {customer_fit: 2, economics: 2, speed: 4, resources: 3, scalability: 4}
+    why: Managers are rarely reachable by ads and the price point is low.
+    reason: low intent and no retention evidence yet
+  - key: product-led
+    side: both
+    scores: {customer_fit: 2, economics: 4, speed: 3, resources: 2, scalability: 5}
+    why: Onboarding needs data migration; not self-serve today.
+    reason: requires a self-serve onboarding the product does not have
+
+pricing:
+  model: subscription
+  value_metric: per cooperative per month, tiered by members
+  price_points:
+    - {name: Pilot plan, price: 40, currency: USD/month, basis: researched, evidence: [E-007]}
+    - {name: Annual plan, price: 400, currency: USD/year, basis: hypothesis}
+  experiments:
+    - {name: Annual pre-pay, tests: [Annual plan], hypothesis: "3 of 5 pilots prepay annually at USD 400", metric: prepayments, threshold: "≥ 3", duration: 6 weeks, kill: "0 prepayments"}
+
+metrics:
+  currency: USD
+  owner: CEO
+  inputs:
+    activated: {value: 14, evidence: [E-001]}
+    new_customers: {value: 5, evidence: [E-007]}
+    arpu: {value: 40, evidence: [E-007]}
+    churn: {value: 0.02, evidence: [E-009]}
+    gross_margin: {value: null}          # not yet measured
+    acquisition_spend: {value: null}     # founders have not tracked GTM spend
+  targets:
+    purchase_conversion: "≥ 40% of active pilots paying by Q2 2027 (target)"
+
+roadmap:
+  phases:
+    - name: First 30 days
+      days: 30
+      objectives: [Sign paid pilots in the pilot region]
+      tasks:
+        - {id: visits, task: Visit 10 cooperatives, owner: ceo, effort_days: 8, cost: 1500, deliverable: Visit notes in the ledger}
+        - {id: case, task: Pilot case study, owner: ceo, effort_days: 3, deliverable: Two-page case study}
+      kpis: [Paid pilots]
+      success_criteria: [2 paid pilots]
+    - name: Days 31–60
+      days: 30
+      objectives: [Open the federation channel]
+      tasks:
+        - {id: fed, task: Federation presentations, owner: ceo, effort_days: 4, cost: 500, depends_on: [case], deliverable: Partnership term sheet}
+        - {id: visits2, task: Visit 10 more cooperatives, owner: ceo, effort_days: 8, cost: 1500, deliverable: Visit notes}
+      kpis: [Introductions, paid pilots]
+      success_criteria: [One federation agreement]
+    - name: Days 61–90
+      days: 30
+      objectives: [Measure conversion and retention of the first cohort]
+      tasks:
+        - {id: annual, task: Annual pre-pay offer, owner: ceo, effort_days: 2, deliverable: Prepayment results}
+        - {id: retention, task: Cohort retention report, owner: cto, effort_days: 3, deliverable: Cohort table}
+      kpis: [Pilot-to-paid conversion, churn]
+      success_criteria: ["≥ 5 paying cooperatives (target)"]
+    - name: Months 4–6
+      days: 90
+      objectives: [Second region via a federation]
+      tasks:
+        - {id: region2, task: Launch with a second federation, owner: ceo, effort_days: 20, cost: 4000, depends_on: [fed], deliverable: 10 pilots}
+      kpis: [Pilots per federation]
+      success_criteria: [Repeatable federation playbook]
+    - name: Months 7–12
+      days: 185
+      objectives: [Repeatable acquisition in two regions]
+      tasks:
+        - {id: hire, task: Hire a customer success lead, owner: ceo, effort_days: 10, cost: 6000, deliverable: Hire}
+      kpis: [Net new paying cooperatives per month]
+      success_criteria: [Payback measured on real CAC]
+
+cross_product:
+  - {product: Manager console, opportunity: "Upsell reconciliation to pilot cooperatives", phase: Days 61–90}
+  - {product: Buyer portal, opportunity: "Processors pay for verified volumes", phase: Months 7–12}

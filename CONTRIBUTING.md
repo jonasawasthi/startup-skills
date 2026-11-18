@@ -13,11 +13,14 @@ python3 scripts/validate_skills.py    # skill spec compliance
 ## Ground rules
 
 1. **No fabricated content.** Examples use the fictional *Fieldnote* company, or clearly marked fictional data. Never commit a real startup's private analysis. `outputs/` is gitignored for that reason.
-2. **Attribute sources.** Knowledge-base files need front matter with `urls`, `date_checked`, `type` (attributed-summary or original-analysis) and `verification`. Paraphrase. Keep quotations short and attributed.
-3. **Verify URLs by title**, not just HTTP status (`scripts/check_links.py`).
+2. **Attribute sources.** Knowledge-base files need front matter with `urls`, `date_checked`, `type` (attributed-summary or original-analysis) and `verification`. New files should also list `sources:` (title, url, author, published, verification) for each URL, so the link checker can confirm the live page title still matches. Paraphrase. Keep quotations short and attributed. When a publisher's site disappears, cite an Internet Archive copy and say so.
+3. **Verify URLs by title**, not just HTTP status (`scripts/check_links.py`). Title relevance is checked automatically for entries listed in `sources:`.
 4. **Skills follow the Agent Skills spec**: portable front matter only (`name`, `description`, `license`, `compatibility`, `metadata`), the name equals the directory, SKILL.md has fewer than 500 lines, and references are one level deep.
 5. **Mechanics belong in code, judgement in Markdown.** Deterministic logic (arithmetic, layout, validation) goes in `lib/startup_kit` with tests.
-6. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
+6. **Research data is never fabricated.** Examples of interviews, quotes or survey answers must be fictional, labelled as illustrative, and use pseudonymous participant codes. Real research notes stay in `outputs/`.
+7. **Business model examples never assert viability.** Prices, costs and volumes in examples carry an evidence status; payment providers are dependencies, not assumptions; and no example may claim liquidity, revenue or willingness to pay without (fictional, labelled) evidence.
+8. **Profiles of real people are sourced, dated and limited.** Investor profiles in `skills/investor-panel-evaluator/investors/` hold public, professional information only, and every fact cites a source that was read. No net worth, quotations, catchphrases, personality descriptions or personal details. Evaluation lenses are labelled as analytical interpretation. Nothing may state or imply that an investor is interested in a company or would invest, and televised deals are never recorded as investments without a source showing they closed. Follow [maintaining investors](skills/investor-panel-evaluator/references/maintaining-investors.md) and run `startup-kit shark-tank profiles`.
+9. **Guards are features.** If you add a slide type or document block, add its honesty checks (evidence, status, overflow) and a test for them.
 
 ## Pull requests
 

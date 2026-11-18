@@ -1,0 +1,176 @@
+# FICTIONAL EXAMPLE. Ottlebrook Pty Ltd is not a real company; the retailer, supplier, consultant, interview
+# participants and every figure below are invented to test the investor-panel-evaluator skill on a physical-product
+# business. Prices are in AUD and exclude GST unless the claim says otherwise.
+# Evidence ledger. status: verified | reported | estimate | assumption | unverified | contradicted
+- id: E-001
+  claim: Ex-factory price per DR-2 heated clothes airer at the 1,000-unit minimum order, per supplier invoice for purchase order 1 (fictional)
+  key: costs.ex_factory_unit
+  value: 61.80
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Contract manufacturer invoice for PO-001, February 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-002
+  claim: Sea freight, import duty and inbound handling per unit, averaged over the first two shipments (fictional)
+  key: costs.freight_duty_unit
+  value: 16.20
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Freight forwarder invoices and customs entries, shipments 1 and 2 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-003
+  claim: Wholesale price per unit to Retailer A under the signed supply agreement; the retailer sets the shelf price at AUD 179 including GST and pays 60 days from end of month (fictional)
+  key: pricing.wholesale_retailer_a
+  value: 89.50
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Supply agreement with Retailer A, signed 2026-03-02, schedule 1 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-004
+  claim: Deductions from every Retailer A invoice under the supply agreement, 6% co-operative marketing and 2% prompt settlement (fictional)
+  key: pricing.retailer_deductions
+  value: 0.08
+  unit: share of wholesale invoice value
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Supply agreement with Retailer A, schedule 2 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-005
+  claim: Warranty returns, 41 of 812 units sold through Retailer A from April to October 2026, all for heating-element faults (fictional)
+  key: quality.return_rate
+  value: 0.05
+  unit: share of units sold
+  status: verified
+  confidence: high
+  source: {type: dataset, ref: "Retailer A returns report, 25 October 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-006
+  claim: Third-party warehouse rates, AUD 3.10 per unit dispatched to the retailer's distribution centre and AUD 14.00 per returned unit handled (fictional)
+  key: costs.3pl_dispatch_unit
+  value: 3.10
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Warehouse services agreement, rate card 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-007
+  claim: Units sold to consumers through 38 Retailer A stores from 6 April to 25 October 2026 (29 weeks), about 0.74 units per store per week (fictional)
+  key: traction.sell_through_units
+  value: 812
+  unit: units
+  status: verified
+  confidence: high
+  source: {type: dataset, ref: "Retailer A supplier portal sell-through export, 25 October 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-008
+  claim: Retailer A re-order, purchase order for 900 units dated 2026-09-18, after the first order of 1,000 units was invoiced and paid in full on 2026-07-31 (fictional)
+  key: traction.reorder_units
+  value: 900
+  unit: units
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Retailer A purchase order PO-A-0412 and bank statement, July 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-009
+  claim: Contribution per unit sold through Retailer A after landed cost, retailer deductions, warehouse dispatch and warranty replacement, before overheads, marketing and stock financing (fictional)
+  key: unit_economics.contribution_retail
+  value: -3.36
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: calculation, ref: "89.50 - (0.08 x 89.50) - (61.80 + 16.20) - 3.10 - 0.05 x (78.00 + 14.00), inputs E-001 to E-006 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+  notes: Reproducible from verified inputs. The startup-kit unit-economics calculator covers subscription models only (ARPU, churn, CAC), so this per-unit contribution is a hand calculation with every input cited.
+- id: E-010
+  claim: Units sold on Ottlebrook's own website at AUD 179 including GST, June to October 2026 (fictional)
+  key: traction.website_units
+  value: 64
+  unit: units
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement; store export not supplied (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-011
+  claim: Estimated contribution per website order before acquisition cost, ex GST (179 / 1.1 = 162.73, less landed cost 78.00, card fees 3.43, courier 18.50 from one carrier quote, warranty 4.60) (fictional)
+  key: unit_economics.contribution_website
+  value: 58.20
+  unit: AUD per order
+  status: estimate
+  confidence: medium
+  source: {type: calculation, ref: "Method in claim; courier rate from a single carrier quote (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-012
+  claim: Acquisition cost per website order through paid social advertising (fictional planning assumption, untested)
+  key: acquisition.cac_paid_social
+  value: 45
+  unit: AUD per order
+  status: assumption
+  confidence: low
+  source: {type: founder, ref: "Founder planning assumption; no campaign has run (fictional)"}
+  owner: Co-founder (commercial)
+  validate: Run a capped paid-social test to the website and measure cost per order
+- id: E-013
+  claim: Cash at bank on 31 October 2026 (fictional)
+  key: finance.cash
+  value: 96000
+  unit: AUD
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement; bank statement not supplied (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-014
+  claim: Monthly fixed costs, covering two reduced founder salaries, warehouse storage, insurance and software (fictional)
+  key: finance.monthly_fixed_costs
+  value: 14500
+  unit: AUD per month
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-015
+  claim: Electrical safety certificate of conformity issued for model DR-2 for sale in Australia on 2026-02-11, and a compliance consultant's memo confirming that the certification and product registration it identifies as required are complete (fictional)
+  key: regulatory.dr2_certified
+  value: true
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Certificate of conformity and consultant memo, February 2026 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-016
+  claim: Founders' stated ambition, a profitable national homewares brand funded mainly from trading rather than a venture-scale business (fictional)
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-017
+  claim: Ex-factory price per unit quoted by the same manufacturer at a 3,000-unit order, valid to 2027-02-28 (fictional)
+  key: costs.ex_factory_unit_moq3000
+  value: 52.40
+  unit: AUD per unit
+  status: verified
+  confidence: high
+  source: {type: document, ref: "Manufacturer quotation Q-2026-117 (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-018
+  claim: Customer interviews I-01 to I-07, buyers recruited from warranty registrations, describing drying laundry indoors in apartments without a dryer or balcony and the workaround they used before (fictional, illustrative)
+  status: reported
+  confidence: medium
+  source: {type: interview, ref: "Interview notes I-01 to I-07, September 2026 (fictional; notes not included in this example)", published: 2026-09-30, accessed: 2026-11-10}
+  updated: 2026-11-10
+  notes: Five of seven describe a recent week of damp or mouldy laundry and an unheated rack as the previous workaround; two paid for laundromat dryers weekly. Fictional and illustrative.
+- id: E-019
+  claim: Founders' prior roles, eight years as a product engineer at a small-appliance importer and six years as a retail account manager at a homewares wholesaler (fictional)
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10
+- id: E-020
+  claim: DR-2 is made by a single contract manufacturer, and no second source has been quoted or qualified (fictional)
+  key: operations.second_source
+  value: false
+  status: reported
+  confidence: medium
+  source: {type: founder, ref: "Founder statement (fictional)", accessed: 2026-11-10}
+  updated: 2026-11-10

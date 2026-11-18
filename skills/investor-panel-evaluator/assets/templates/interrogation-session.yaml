@@ -1,0 +1,28 @@
+# Interrogation session state. Spec: references/interrogation.md.
+# Read this file at the start of every turn and write it at the end of every turn while the session is active.
+# Validate after every write:  startup-kit shark-tank session <this file>
+# Rules: one question per turn asking for one decisive unknown (one fact or one figure; "and" may only bind a
+# figure to its unit, date or basis; two figures are two turns), ending with its only "?", no first person; at most two follow-ups per root
+# question; root questions never exceed budget; every fact is proposed_status: reported (founder-provided).
+# Nothing reaches evidence.yaml until the founder agrees and `shark-tank record ... --confirmed` runs.
+session: "<YYYY-MM-DD>-a"
+mode: investor                 # investor (1 profile) | panel (3 to 7 profiles) | archetype (investors: [])
+investors: ["<investor-id>"]
+budget: 10                     # root questions; default 10; the user may set 5 to 20
+status: setup                  # setup | awaiting-answer | paused | debrief | closed
+queue:                         # copied from: startup-kit shark-tank queue base-read.yaml --profile <profile-dir> --investors <ids> --budget <n> --json
+  - {id: Q1, dimension: D03, lens: L1, investor: "<investor-id>", tier: 1, text: "<One fact or one figure, for this startup, for example: how many retailers have placed a second order?>"}
+  - {id: Q2, dimension: D07, lens: L2, investor: "<investor-id>", tier: 2, text: "<Question?>"}
+turns: []
+# A completed turn looks like this (a follow-up has id Q1a and follow_up_of: Q1):
+#  - n: 1
+#    question: {id: Q1, dimension: D03, lens: L1, investor: "<investor-id>", text: "<Question?>", follow_up_of: null}
+#    answer: "<the founder's words, verbatim>"
+#    assessment: {specificity: partial, evidence: missing, financial: n/a, strategic: partial,
+#                 customer: clear, execution: n/a, risk: missing}     # clear | partial | missing | n/a
+#    decision: follow-up                                               # follow-up | move-on | stop
+#    new_facts: [{claim: "<fact as stated>", key: "<ledger key>", value: 0, proposed_status: reported}]
+pending_ledger: []
+# A pending item looks like this; it is offered once, at the debrief:
+#  - {id: F1, claim: "<fact as stated>", key: "<ledger key>", value: 0, unit: "<unit>", turn: 1, proposed_status: reported}
+next_action: ask Q1
